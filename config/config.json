@@ -1,0 +1,9 @@
+{
+  "development": {
+    "username": "user",
+    "password": "1234",
+    "database": "amazon_db",
+    "host": "localhost",
+    "dialect": "mysql"
+  }
+}
