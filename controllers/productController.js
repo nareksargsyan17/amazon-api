@@ -12,6 +12,7 @@ const addProduct = async (req, res) => {
             colorId: color
         }
     });
+
     const product_size_data = sizes.map(size => {
         return {
             productId: product.id,
