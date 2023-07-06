@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 const {
-  Model, Sequelize, INTEGER
-} = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
+  Model, INTEGER, STRING, TEXT, BOOLEAN, DATE
+} = require("sequelize");
+module.exports = (sequelize,) => {
   class Product extends Model {
     /**
      * Helper method for defining associations.
@@ -11,57 +11,55 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.Category, {
-        foreignKey : "category_id",
-        as: "category",
-      })
+      const { Product_Color,  Category, Color, Size, Product_Size } = models;
+
+      this.belongsTo(Category, {foreignKey : "categoryId"});
+
+      this.belongsToMany(Color, {through: Product_Color, foreignKey : "productId"});
+
+      this.belongsToMany(Size, {through: Product_Size, foreignKey: "productId"});
     }
   }
   Product.init({
-    id: {
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: Sequelize.INTEGER
-    },
     name: {
-      type: Sequelize.STRING,
+      type: STRING,
       allowNull: false,
     },
     description : {
-      type : Sequelize.TEXT,
+      type : TEXT,
     },
     brand : {
-      type : Sequelize.STRING,
+      type : STRING,
       allowNull : false
     },
     price : {
-      type : Sequelize.INTEGER,
+      type : INTEGER,
       allowNull:  false
     },
     isPublished : {
-      type : Sequelize.BOOLEAN
+      type : BOOLEAN
     },
-    category_id: {
+    categoryId: {
       type: INTEGER,
       allowNull: false,
       reference: {
-        model: 'Category',
-        key: 'id',
+        model: "category",
+        key: "id",
       }
     },
     createdAt: {
       allowNull: false,
-      type: Sequelize.DATE
+      type: DATE
     },
     updatedAt: {
       allowNull: false,
-      type: Sequelize.DATE
+      type: DATE
     },
   }, {
+    freezeTableName: true,
     sequelize,
-    modelName: 'Product',
-    tableName: 'product'
+    modelName: "Product",
+    tableName: "product"
   });
   return Product;
 };

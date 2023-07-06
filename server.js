@@ -1,20 +1,18 @@
 const express = require("express");
 const cors = require("cors");
-const router = require("./routes/productRouter.js")
+const productRouter = require("./routes/productRouter.js");
+const categoryRouter = require("./routes/categoryRouter.js");
+const colorRouter = require("./routes/colorRouter");
+const sizeRouter = require("./routes/sizeRouter");
 
 
 const app = express();
-const port = 3000;
+const port = 3001;
 
 
 const corsOption = {
     origin: "https://localhost:8081"
 }
-
-//routers
-
-app.use("/api/products", router);
-
 
 //middleware
 
@@ -23,13 +21,13 @@ app.use(express.json());
 app.use(express.urlencoded({extended : true}));
 
 
-//api
+//routers
 
-app.get('/', (req, res) => {
-    res.json({message : "wow"})
-})
+app.use("/api/products", productRouter);
+app.use("/api/categories", categoryRouter);
+app.use("/api/colors", colorRouter);
+app.use("/api/sizes", sizeRouter);
 
-//
 
 
 app.listen(port, () => {

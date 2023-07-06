@@ -1,52 +1,53 @@
 'use strict';
-const {INTEGER} = require("sequelize");
+const { INTEGER, STRING, TEXT, BOOLEAN, DATE } = require("sequelize");
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     await queryInterface.createTable('product', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: INTEGER
       },
       name: {
-        type: Sequelize.STRING,
+        type: STRING,
         allowNull: false,
       },
       description : {
-        type : Sequelize.TEXT,
+        type : TEXT,
       },
       brand : {
-        type : Sequelize.STRING,
+        type : STRING,
         allowNull : false
       },
       price : {
-        type : Sequelize.INTEGER,
+        type : INTEGER,
         allowNull:  false
       },
       isPublished : {
-        type : Sequelize.BOOLEAN
+        type : BOOLEAN,
+        defaultValue: false
       },
-      category_id: {
+      categoryId: {
         type: INTEGER,
         allowNull: false,
         reference: {
-          model: 'Category',
+          model: 'category',
           key: 'id',
         }
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: DATE
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: DATE
       }
     });
   },
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.dropTable('product');
   }
 };
