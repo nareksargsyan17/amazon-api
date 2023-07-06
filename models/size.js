@@ -9,11 +9,7 @@ module.exports = (sequelize) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
-      const { Product, Product_Size } = models;
-
-      this.belongsToMany(Product, {through: Product_Size, foreignKey: "sizeId"});
-    }
+    static associate(models) {}
   }
   Size.init({
     size: {
@@ -24,7 +20,7 @@ module.exports = (sequelize) => {
   }, {
     sequelize,
     modelName: "Size",
-    tableName: "size",
+    tableName: "sizes",
     timestamps: false,
     freezeTableName: true
   });

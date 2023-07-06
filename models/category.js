@@ -15,7 +15,7 @@ module.exports = (sequelize) => {
 
       this.hasMany(Product, {
         foreignKey: "categoryId",
-        as : "product"
+        as : "products"
       })
     }
   }
@@ -28,7 +28,7 @@ module.exports = (sequelize) => {
     freezeTableName : true,
     sequelize,
     modelName: "Category",
-    tableName: "category",
+    tableName: "categories",
     timestamps: false
   });
   return Category;

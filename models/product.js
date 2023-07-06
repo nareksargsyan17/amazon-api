@@ -1,6 +1,6 @@
 "use strict";
 const {
-  Model, INTEGER, STRING, TEXT, BOOLEAN, DATE
+  Model, INTEGER, STRING, TEXT, BOOLEAN, DATE, JSON
 } = require("sequelize");
 module.exports = (sequelize,) => {
   class Product extends Model {
@@ -11,13 +11,9 @@ module.exports = (sequelize,) => {
      */
     static associate(models) {
       // define association here
-      const { Product_Color,  Category, Color, Size, Product_Size } = models;
+      const { Category } = models;
 
       this.belongsTo(Category, {foreignKey : "categoryId"});
-
-      this.belongsToMany(Color, {through: Product_Color, foreignKey : "productId"});
-
-      this.belongsToMany(Size, {through: Product_Size, foreignKey: "productId"});
     }
   }
   Product.init({
@@ -43,9 +39,17 @@ module.exports = (sequelize,) => {
       type: INTEGER,
       allowNull: false,
       reference: {
-        model: "category",
+        model: "categories",
         key: "id",
       }
+    },
+    colors: {
+      type: JSON,
+      allowNull: false
+    },
+    sizes: {
+      type: JSON,
+      allowNull: false
     },
     createdAt: {
       allowNull: false,
@@ -59,7 +63,7 @@ module.exports = (sequelize,) => {
     freezeTableName: true,
     sequelize,
     modelName: "Product",
-    tableName: "product"
+    tableName: "products"
   });
   return Product;
 };

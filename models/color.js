@@ -11,9 +11,6 @@ module.exports = (sequelize) => {
      */
     static associate(models) {
       // define association here
-      const {Product, Product_Color} = models;
-
-      this.belongsToMany(Product, {through : Product_Color, foreignKey: "colorId"})
     }
   }
   Color.init({
@@ -25,7 +22,7 @@ module.exports = (sequelize) => {
   }, {
     sequelize,
     modelName: "Color",
-    tableName: "color",
+    tableName: "colors",
     freezeTableName: true,
     timestamps: false
   });
