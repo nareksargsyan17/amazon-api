@@ -17,6 +17,16 @@ const getAllProducts = async (req, res) => {
     res.status(200).send(products);
 }
 
+const getAllPublishedProducts = async (req, res) => {
+    const products = await Product.findAll({
+        where: { isPublished: true },
+        include: [
+            {model: Category}
+        ]
+    });
+    res.status(200).send(products);
+}
+
 const getProductById = async (req, res) => {
     const { id } = req.params;
 
@@ -64,6 +74,7 @@ const deleteProduct = async (req, res) => {
 module.exports = {
     addProduct,
     getAllProducts,
+    getAllPublishedProducts,
     updateProduct,
     getProductById,
     deleteProduct
