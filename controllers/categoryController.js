@@ -1,4 +1,4 @@
-const { Category, Product } = require("../models");
+const { Category } = require("../models");
 
 const addCategory = async (req, res) => {
     const {...data} = req.body;
@@ -8,12 +8,7 @@ const addCategory = async (req, res) => {
 };
 
 const getAllCategories = async (req, res) => {
-    const categories = await Category.findAll({
-        include: {
-            model: Product,
-            as: 'products'
-        }
-    });
+    const categories = await Category.findAll();
     res.status(200).send(categories);
 };
 

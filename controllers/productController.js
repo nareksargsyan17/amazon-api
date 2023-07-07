@@ -1,4 +1,5 @@
 const { Product, Category } = require('../models/index.js');
+const {Op} = require("sequelize");
 
 const addProduct = async (req, res) => {
     const {...data} = req.body;
@@ -41,6 +42,7 @@ const getProductById = async (req, res) => {
     res.status(200).send(product);
 }
 
+
 const updateProduct = async (req, res) => {
     const { id } = req.params;
     const {...data} = req.body;
@@ -71,11 +73,51 @@ const deleteProduct = async (req, res) => {
     res.send(200)
 }
 
+const productFilter = async (req, res) => {
+    const { categoryId } = req.query;
+
+    const filteredProducts = await Product.findAll({
+        where: {
+            categoryId: {
+                [Op.in]: categoryId.split(",")
+            }
+        },
+        include: [
+            { model: Category }
+        ]
+    })
+    res.status(200).send(filteredProducts);
+}
+
+const productSearch = async (req, res) => {
+    const { searchBy } = req.query;
+
+    const searchedProduct = await Product.findAll({
+        where: {
+            [Op.or] : [
+                {
+                    name: {
+                        [Op.substring]: searchBy
+                    }
+                },
+                {
+                    brand: {
+                        [Op.substring]: searchBy
+                    }
+                }
+            ]
+        }
+    })
+    res.status(200).send(searchedProduct);
+}
+
 module.exports = {
     addProduct,
     getAllProducts,
     getAllPublishedProducts,
     updateProduct,
     getProductById,
-    deleteProduct
+    deleteProduct,
+    productFilter,
+    productSearch
 }
