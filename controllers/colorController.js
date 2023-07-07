@@ -1,10 +1,20 @@
 const { Color } = require("../models");
+const { colorSchema } = require("../validations/colorSchema");
 
 const addColor = async (req, res) => {
-    const { ...data } = req.body;
+    try {
+        const { ...data } = req.body;
 
-    const color = await Color.create(data);
-    res.status(201).send(color);
+        await colorSchema.validateAsync(data);
+        const color = await Color.create(data);
+
+        return res.status(201).send(color);
+    } catch (error) {
+
+        return res.status(500).json({
+            message: error.message
+        })
+    }
 }
 
 const getAllColors = async (req, res) => {

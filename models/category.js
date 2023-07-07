@@ -16,8 +16,7 @@ module.exports = (sequelize) => {
       this.hasMany(Product, {
         foreignKey: "categoryId",
         as: "products",
-        onDelete: "cascade",
-        hooks: true
+        onDelete: "cascade"
       })
     }
   }

@@ -1,6 +1,5 @@
 const router = require("express").Router();
-const colorController = require("../controllers/colorController");
-
+const colorController = require("../../controllers/colorController");
 
 router.post("/addColor", colorController.addColor);
 router.get("/getAllColors", colorController.getAllColors);

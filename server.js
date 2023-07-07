@@ -1,9 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const productRouter = require("./routes/productRouter.js");
-const categoryRouter = require("./routes/categoryRouter.js");
-const colorRouter = require("./routes/colorRouter");
-const sizeRouter = require("./routes/sizeRouter");
+const apiRouter = require("./routes/api");
 
 
 const app = express();
@@ -23,10 +20,7 @@ app.use(express.urlencoded({extended : true}));
 
 //routers
 
-app.use("/api/products", productRouter);
-app.use("/api/categories", categoryRouter);
-app.use("/api/colors", colorRouter);
-app.use("/api/sizes", sizeRouter);
+app.use("/api", apiRouter);
 
 
 
