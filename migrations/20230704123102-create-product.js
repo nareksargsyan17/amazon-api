@@ -32,10 +32,12 @@ module.exports = {
       categoryId: {
         type: INTEGER,
         allowNull: false,
-        reference: {
+        references: {
           model: 'categories',
           key: 'id',
-        }
+        },
+        onDelete: "cascade",
+        onUpdate: "cascade",
       },
       colors: {
         type: JSON,

@@ -13,7 +13,10 @@ module.exports = (sequelize,) => {
       // define association here
       const { Category } = models;
 
-      this.belongsTo(Category, {foreignKey : "categoryId"});
+      this.belongsTo(Category, {
+        foreignKey: "categoryId",
+        onDelete: "cascade"
+      });
     }
   }
   Product.init({
@@ -38,10 +41,12 @@ module.exports = (sequelize,) => {
     categoryId: {
       type: INTEGER,
       allowNull: false,
-      reference: {
+      references: {
         model: "categories",
         key: "id",
-      }
+      },
+      onDelete: "cascade",
+      onUpdate: "cascade"
     },
     colors: {
       type: JSON,
@@ -63,7 +68,8 @@ module.exports = (sequelize,) => {
     freezeTableName: true,
     sequelize,
     modelName: "Product",
-    tableName: "products"
+    tableName: "products",
   });
+
   return Product;
 };

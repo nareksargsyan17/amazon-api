@@ -15,7 +15,9 @@ module.exports = (sequelize) => {
 
       this.hasMany(Product, {
         foreignKey: "categoryId",
-        as : "products"
+        as: "products",
+        onDelete: "cascade",
+        hooks: true
       })
     }
   }
@@ -29,7 +31,8 @@ module.exports = (sequelize) => {
     sequelize,
     modelName: "Category",
     tableName: "categories",
-    timestamps: false
+    timestamps: false,
   });
+
   return Category;
 };
