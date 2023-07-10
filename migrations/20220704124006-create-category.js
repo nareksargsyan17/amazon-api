@@ -14,6 +14,10 @@ module.exports = {
         type: STRING,
         allowNull: false,
         unique: true
+      },
+      parentId: {
+        type: INTEGER,
+        default: null
       }
     });
   },

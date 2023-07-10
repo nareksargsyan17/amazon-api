@@ -22,7 +22,5 @@ router.get("/getAllPublishedProducts", productController.getAllPublishedProducts
 router.get("/getProductById/:id", validateId, productController.getProductById);
 router.put("/updateProduct/:id", validateId, productController.updateProduct);
 router.delete("/deleteProduct/:id", validateId, productController.deleteProduct);
-router.post("/filter", productController.productFilter);
-router.get("/search", productController.productSearch);
 
 module.exports = router;

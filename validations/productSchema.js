@@ -14,5 +14,6 @@ const productSchema = Joi.object({
   colors: Joi.string(),
   sizes: Joi.string()
 })
+
 exports.productSchema = productSchema;
 

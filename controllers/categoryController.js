@@ -1,4 +1,4 @@
-const { Category } = require("../models");
+const { Category, Product } = require("../models");
 const { categorySchema } = require("../validations/categorySchema");
 
 const addCategory = async (req, res) => {
@@ -19,7 +19,7 @@ const addCategory = async (req, res) => {
 
 const getAllCategories = async (req, res) => {
   try {
-    const categories = await Category.findAll();
+    const categories = await Category.findAll({where : { parentId: null }});
     if (categories.length === 0) {
       return res.status(404).send({
         message : "There are no categories"
@@ -34,14 +34,45 @@ const getAllCategories = async (req, res) => {
   }
 };
 
-const getCategory = async (req, res) => {
+const getCategory = async (req, res)  => {
   try {
     const { id } = req.params;
     const category = await Category.findByPk(id);
-
-    return res.status(200).send(category);
+    const subCategories = await Category.findAll({where : { parentId : category.id }});
+    return res.status(200).send({ category, subCategories });
   } catch (error) {
+    return res.status(500).send({
+      message : "Something is wrong"
+    });
+  }
+}
 
+const getProductsByCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const products = [];
+
+    const category = await Category.findByPk(id, {include: { model: Product, as: "products" }});
+    products.push(...category.products);
+    await subcategory(category);
+    async function subcategory(category) {
+      try {
+        const subCategories = await Category.findAll({where : { parentId : category.id }, include: { model: Product, as: "products" }});
+        subCategories.forEach(child => {
+          products.push(...child.products);
+        })
+        for (let i = 0; i < subCategories.length; i++) {
+          if (subCategories[i].id) {
+            await subcategory(subCategories[i]);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    return res.status(200).send(products);
+  } catch (error) {
     return res.status(500).send({
       message: "Something is wrong"
     });
@@ -95,6 +126,7 @@ module.exports = {
   addCategory,
   getAllCategories,
   getCategory,
+  getProductsByCategory,
   updateCategory,
   deleteCategory
 }

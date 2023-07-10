@@ -23,6 +23,7 @@ const categorySchema = Joi.object({
     .messages({
       'any.required': "Name is required"
     }),
+  parentId: Joi.number()
 })
 
 exports.categorySchema = categorySchema;

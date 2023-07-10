@@ -1,10 +1,11 @@
-const { Product, Category } = require('../models');
-const { Op } = require("sequelize");
-const { productSchema } = require("../validations/productSchema")
+const {Product, Category} = require('../models');
+const {Op} = require("sequelize");
+const {productSchema} = require("../validations/productSchema");
+const pagination = require("../pagination/pagination");
 
 const addProduct = async (req, res) => {
   try {
-    const { ...data } = req.body;
+    const {...data} = req.body;
 
     await productSchema.validateAsync(data);
     const product = await Product.create(data);
@@ -20,10 +21,27 @@ const addProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   try {
+    const {page, limit, sortDirection, sortWith, searchBy} = req.query;
+
     const products = await Product.findAll({
+      ...pagination(page, limit, sortDirection, sortWith),
       include: [
         { model: Category }
-      ]
+      ],
+      where: {
+        [Op.or]: [
+          {
+            name: {
+              [Op.substring]: searchBy ? searchBy : ""
+            }
+          },
+          {
+            brand: {
+              [Op.substring]: searchBy ? searchBy : ""
+            }
+          }
+        ]
+      }
     });
     if (products.length === 0) {
       return res.json({
@@ -42,11 +60,32 @@ const getAllProducts = async (req, res) => {
 
 const getAllPublishedProducts = async (req, res) => {
   try {
+    const {page, limit, sortDirection, sortWith, searchBy} = req.query;
+
     const products = await Product.findAll({
-      where: { isPublished: true },
+      ...pagination(page, limit, sortDirection, sortWith),
       include: [
         { model: Category }
-      ]
+      ],
+      where: {
+        [Op.and]: [
+          {isPublished: true},
+          {
+            [Op.or]: [
+              {
+                name: {
+                  [Op.substring]: searchBy ? searchBy : ""
+                }
+              },
+              {
+                brand: {
+                  [Op.substring]: searchBy ? searchBy : ""
+                }
+              }
+            ]
+          }
+        ]
+      }
     });
     if (products.length === 0) {
       return res.json({
@@ -134,75 +173,11 @@ const deleteProduct = async (req, res) => {
   }
 }
 
-const productFilter = async (req, res) => {
-  try {
-    const { categories } = req.body;
-
-    const filteredProducts = await Product.findAll({
-      where: {
-        categoryId: {
-          [Op.in]: categories
-        }
-      },
-      include: [
-        { model: Category }
-      ]
-    })
-
-    if (filteredProducts.length === 0) {
-      return res.json({
-        message: "There are not Products"
-      });
-    }
-
-    return res.status(200).send(filteredProducts);
-  } catch (error) {
-    return res.json({
-      message: "Something is wrong"
-    });
-  }
-}
-
-const productSearch = async (req, res) => {
-  try {
-    const {searchBy} = req.query;
-    const searchedProduct = await Product.findAll({
-      where: {
-        [Op.or]: [
-          {
-            name: {
-              [Op.substring]: searchBy
-            }
-          },
-          {
-            brand: {
-              [Op.substring]: searchBy
-            }
-          }
-        ]
-      }
-    })
-    if (searchedProduct.length === 0) {
-      return res.json({
-        message: "There are not Products"
-      });
-    }
-
-    return res.status(200).send(searchedProduct);
-  } catch (error) {
-    return res.json({
-      message: "Something is wrong"
-    });
-  }
-}
-
 module.exports = {
   addProduct,
   getAllProducts,
   getAllPublishedProducts,
   updateProduct,
   getProductById,
-  deleteProduct,
-  productFilter,
-  productSearch
+  deleteProduct
 }

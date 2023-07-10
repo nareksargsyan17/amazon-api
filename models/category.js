@@ -1,6 +1,6 @@
 "use strict";
 const {
-  Model, STRING
+  Model, STRING, INTEGER
 } = require("sequelize");
 module.exports = (sequelize) => {
   class Category extends Model {
@@ -24,6 +24,10 @@ module.exports = (sequelize) => {
     name: {
       type: STRING,
       allowNull: false,
+    },
+    parentId: {
+      type: INTEGER,
+      default: null
     }
   }, {
     freezeTableName : true,
