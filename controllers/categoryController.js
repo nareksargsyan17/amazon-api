@@ -1,19 +1,19 @@
-const {Category} = require("../models");
-const {categorySchema} = require("../validations/categorySchema");
+const { Category } = require("../models");
+const { categorySchema } = require("../validations/categorySchema");
 
 const addCategory = async (req, res) => {
   try {
-    const {...data} = req.body;
+    const { ...data } = req.body;
 
     await categorySchema.validateAsync(data);
     const category = await Category.create(data);
-    return res.status(200).send(category);
 
-  } catch (e) {
-    console.error(e);
+    return res.status(200).send(category);
+  } catch (error) {
+
     return res.status(500).json({
-      message: e.message
-    })
+      message: error.message
+    });
   }
 };
 
@@ -21,49 +21,74 @@ const getAllCategories = async (req, res) => {
   try {
     const categories = await Category.findAll();
     if (categories.length === 0) {
-      console.log(typeof res.status(204))
       return res.status(404).send({
-        message : "Categories not exists"
-      })
+        message : "There are no categories"
+      });
     }
-    return res.status(200).send(categories);
 
+    return res.status(200).send(categories);
   } catch (error) {
     return res.status(500).send({
       message : "Something is wrong"
-    })
+    });
   }
 };
 
 const getCategory = async (req, res) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
+    const category = await Category.findByPk(id);
 
-  const category = await Category.findByPk(id);
-  res.status(200).send(category);
+    return res.status(200).send(category);
+  } catch (error) {
+
+    return res.status(500).send({
+      message: "Something is wrong"
+    });
+  }
 }
 
 const updateCategory = async (req, res) => {
-  const {id} = req.params;
-  const {...data} = req.body;
+  try {
+    const { id } = req.params;
+    const { ...data } = req.body;
 
-  await Category.update(
-    data,
-    {
-      where: {id: id},
-    })
-  const updatedCategory = await Category.findByPk(id);
-  res.status(200).send(updatedCategory);
+    await categorySchema.validateAsync(data);
+    await Category.update(
+      data,
+      {
+        where: { id: id },
+      })
+    const updatedCategory = await Category.findByPk(id);
+
+    return res.status(200).send(updatedCategory);
+  } catch (error) {
+
+    return res.json({
+      message: error.message
+    });
+  }
 }
 
 const deleteCategory = async (req, res) => {
-  const {id} = req.params;
+  try {
+    const { id } = req.params;
 
-  await Category.destroy({
-    where: {
-      id: id
-    }
-  })
-  res.send(200);
+    await Category.destroy({
+      where: {
+        id: id
+      }
+    })
+
+    return res.send({
+      message: "Deleted Size by id:" + id
+    });
+  } catch (error) {
+
+    return res.status(500).send({
+      message: "Something is wrong"
+    });
+  }
 }
 
 module.exports = {

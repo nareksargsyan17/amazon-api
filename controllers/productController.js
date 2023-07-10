@@ -1,114 +1,199 @@
-const {Product, Category} = require('../models/index.js');
-const {Op} = require("sequelize");
+const { Product, Category } = require('../models');
+const { Op } = require("sequelize");
+const { productSchema } = require("../validations/productSchema")
 
 const addProduct = async (req, res) => {
-  const {...data} = req.body;
+  try {
+    const { ...data } = req.body;
 
-  const product = await Product.create(data);
+    await productSchema.validateAsync(data);
+    const product = await Product.create(data);
 
-  res.status(200).send(product);
+    return res.status(200).send(product);
+  } catch (error) {
+
+    return res.status(500).json({
+      message: error.message
+    });
+  }
 }
 
 const getAllProducts = async (req, res) => {
-  const products = await Product.findAll({
-    include: [
-      {model: Category}
-    ]
-  });
-  res.status(200).send(products);
+  try {
+    const products = await Product.findAll({
+      include: [
+        { model: Category }
+      ]
+    });
+    if (products.length === 0) {
+      return res.json({
+        message: "There are no products"
+      })
+    }
+
+    return res.status(200).send(products);
+  } catch (error) {
+
+    return res.status(500).send({
+      message: "Something is wrong"
+    });
+  }
 }
 
 const getAllPublishedProducts = async (req, res) => {
-  const products = await Product.findAll({
-    where: {isPublished: true},
-    include: [
-      {model: Category}
-    ]
-  });
-  res.status(200).send(products);
+  try {
+    const products = await Product.findAll({
+      where: { isPublished: true },
+      include: [
+        { model: Category }
+      ]
+    });
+    if (products.length === 0) {
+      return res.json({
+        message: "There are no products"
+      });
+    }
+
+    return res.status(200).send(products);
+  } catch (error) {
+
+    return res.status(500).send({
+      message: "Something is wrong"
+    });
+  }
 }
 
 const getProductById = async (req, res) => {
-  const {id} = req.params;
+  try {
+    const { id } = req.params;
 
-  const product = await Product.findByPk(
-    id,
-    {
-      include: [
-        {model: Category}
-      ]
-    })
+    const product = await Product.findByPk(
+      id,
+      {
+        include: [
+          { model: Category }
+        ]
+      })
 
-  res.status(200).send(product);
+    return res.status(200).send(product);
+  } catch (error) {
+
+    return res.status(500).send({
+      message: "Something is wrong"
+    });
+  }
 }
 
 
 const updateProduct = async (req, res) => {
-  const {id} = req.params;
-  const {...data} = req.body;
+  try {
+    const { id } = req.params;
+    const { ...data } = req.body;
+    await productSchema.validateAsync(data);
 
-  await Product.update(
-    data,
-    {
-      where: {
-        id: id
-      }
-    })
+    await Product.update(
+      data,
+      {
+        where: {
+          id: id
+        }
+      })
 
 
-  const product = await Product.findByPk(
-    id, {
-      includes: [
-        {model: Category, required: true},
-      ]
-    })
+    const product = await Product.findByPk(
+      id, {
+        includes: [
+          { model: Category },
+        ]
+      })
 
-  res.status(200).send(product);
+    return res.status(200).send(product);
+  } catch (error) {
+    return res.json({
+      message: error.message
+    });
+  }
 }
 
 const deleteProduct = async (req, res) => {
-  const {id} = req.params;
+  try {
+    const { id } = req.params;
 
-  await Product.destroy({where: {id: id}});
-  res.send(200)
+    await Product.destroy({
+      where: { id: id }
+    });
+
+    return res.send({
+      message: "Deleted Size by id:" + id
+    });
+  } catch (error) {
+
+    return res.json({
+      message: "Something is wrong"
+    })
+  }
 }
 
 const productFilter = async (req, res) => {
-  const {categoryId} = req.query;
+  try {
+    const { categories } = req.body;
 
-  const filteredProducts = await Product.findAll({
-    where: {
-      categoryId: {
-        [Op.in]: categoryId.split(",")
-      }
-    },
-    include: [
-      {model: Category}
-    ]
-  })
-  res.status(200).send(filteredProducts);
+    const filteredProducts = await Product.findAll({
+      where: {
+        categoryId: {
+          [Op.in]: categories
+        }
+      },
+      include: [
+        { model: Category }
+      ]
+    })
+
+    if (filteredProducts.length === 0) {
+      return res.json({
+        message: "There are not Products"
+      });
+    }
+
+    return res.status(200).send(filteredProducts);
+  } catch (error) {
+    return res.json({
+      message: "Something is wrong"
+    });
+  }
 }
 
 const productSearch = async (req, res) => {
-  const {searchBy} = req.query;
-
-  const searchedProduct = await Product.findAll({
-    where: {
-      [Op.or]: [
-        {
-          name: {
-            [Op.substring]: searchBy
+  try {
+    const {searchBy} = req.query;
+    const searchedProduct = await Product.findAll({
+      where: {
+        [Op.or]: [
+          {
+            name: {
+              [Op.substring]: searchBy
+            }
+          },
+          {
+            brand: {
+              [Op.substring]: searchBy
+            }
           }
-        },
-        {
-          brand: {
-            [Op.substring]: searchBy
-          }
-        }
-      ]
+        ]
+      }
+    })
+    if (searchedProduct.length === 0) {
+      return res.json({
+        message: "There are not Products"
+      });
     }
-  })
-  res.status(200).send(searchedProduct);
+
+    return res.status(200).send(searchedProduct);
+  } catch (error) {
+    return res.json({
+      message: "Something is wrong"
+    });
+  }
 }
 
 module.exports = {

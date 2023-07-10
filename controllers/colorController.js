@@ -13,42 +13,76 @@ const addColor = async (req, res) => {
 
         return res.status(500).json({
             message: error.message
-        })
+        });
     }
 }
 
 const getAllColors = async (req, res) => {
-    const colors = await Color.findAll();
-    res.status(200).send(colors);
+    try {
+        const colors = await Color.findAll();
+        if (colors.length === 0) {
+            return res.json({
+                message: "There are not Colors"
+            });
+        }
+
+        return res.status(200).send(colors);
+    } catch (error) {
+
+        return res.status(500).json({
+            message: "Something is wrong"
+        });
+    }
 }
 
 const getColor = async (req, res) => {
-    const { id } = req.params;
+    try {
+        const { id } = req.params;
+        const color = await Color.findByPk(id);
 
-    const color = await Color.findByPk(id);
-    res.status(200).send(color);
+        return res.status(200).send(color);
+    } catch (error) {
+        return res.status(500).json({
+            message: "Something is wrong"
+        });
+    }
 }
 
 const updateColor = async (req, res) => {
-    const { id } = req.params;
-    const { ...data } = req.body;
+    try {
+        const { id } = req.params;
+        const { ...data } = req.body;
+        await colorSchema.validateAsync(data)
+        await Color.update(
+          data,
+          {
+              where : { id: id },
+          })
+        const updatedColor = await Color.findByPk(id);
 
-    await Color.update(
-        data,
-        {
-            where : { id: id },
-        })
-    const updatedColor = await Color.findByPk(id);
-    res.status(200).send(updatedColor);
+        return res.status(200).send(updatedColor);
+    } catch (error) {
+
+        return res.status(500).json({
+            message: error.message
+        });
+    }
 }
 
 const deleteColor = async (req, res) => {
-    const { id } = req.params;
+    try {
+        const { id } = req.params;
+        await Color.destroy({
+            where: { id: id }
+        });
 
-    await Color.destroy({
-        where: { id: id }
-    });
-    res.status(200).send("Deleted color by id:" + id);
+        return res.status(200).send("Deleted color by id:" + id);
+    } catch (error) {
+
+        return res.status(500).json({
+            message: "Something is wrong"
+        });
+    }
 }
 
 module.exports = {
