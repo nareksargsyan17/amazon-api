@@ -3,9 +3,7 @@ const { Color } = require('../models');
 
 async function existsColor(color) {
   const colorField = await Color.findOne({
-    where: {
-      color : color,
-    }
+    where: { color }
   });
 
   if (colorField) {

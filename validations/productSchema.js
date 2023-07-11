@@ -4,15 +4,21 @@ const productSchema = Joi.object({
   name: Joi.string()
     .alphanum()
     .required(),
-  description: Joi.string(),
-  brand: Joi.string(),
+  description: Joi.string()
+    .required(),
+  brand: Joi.string()
+    .required(),
   price: Joi.number()
-    .integer(),
+    .integer()
+    .required(),
   isPublished: Joi.boolean(),
   categoryId: Joi.number()
-    .integer(),
-  colors: Joi.string(),
+    .integer()
+    .required(),
+  colors: Joi.string()
+    .required(),
   sizes: Joi.string()
+    .required()
 })
 
 exports.productSchema = productSchema;

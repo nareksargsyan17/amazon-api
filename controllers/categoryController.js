@@ -1,16 +1,15 @@
 const { Category, Product } = require("../models");
 const { categorySchema } = require("../validations/categorySchema");
+const { Op } = require("sequelize");
 
 const addCategory = async (req, res) => {
   try {
     const { ...data } = req.body;
-
     await categorySchema.validateAsync(data);
     const category = await Category.create(data);
 
     return res.status(200).send(category);
   } catch (error) {
-
     return res.status(500).json({
       message: error.message
     });
@@ -19,30 +18,36 @@ const addCategory = async (req, res) => {
 
 const getAllCategories = async (req, res) => {
   try {
-    const categories = await Category.findAll({where : { parentId: null }});
-    if (categories.length === 0) {
-      return res.status(404).send({
-        message : "There are no categories"
-      });
-    }
+    const categories = await Category.findAll({ where: { parentId: null }});
 
     return res.status(200).send(categories);
   } catch (error) {
     return res.status(500).send({
-      message : "Something is wrong"
+      message: "Something is wrong"
     });
   }
 };
 
-const getCategory = async (req, res)  => {
+const getCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    const category = await Category.findByPk(id);
-    const subCategories = await Category.findAll({where : { parentId : category.id }});
-    return res.status(200).send({ category, subCategories });
+    const categories = await Category.findAll({
+      where: {
+        [Op.or]: [
+          {
+            parentId: id
+          },
+          {
+            id: id
+          }
+        ]
+      }
+    });
+
+    return res.status(200).send(categories);
   } catch (error) {
     return res.status(500).send({
-      message : "Something is wrong"
+      message: "Something is wrong"
     });
   }
 }
@@ -51,13 +56,16 @@ const getProductsByCategory = async (req, res) => {
   try {
     const { id } = req.params;
     const products = [];
-
-    const category = await Category.findByPk(id, {include: { model: Product, as: "products" }});
+    const category = await Category.findByPk(id, { include: { model: Product, as: "products" }});
     products.push(...category.products);
     await subcategory(category);
+
     async function subcategory(category) {
       try {
-        const subCategories = await Category.findAll({where : { parentId : category.id }, include: { model: Product, as: "products" }});
+        const subCategories = await Category.findAll({
+          where: { parentId: category.id },
+          include: { model: Product, as: "products" }
+        });
         subCategories.forEach(child => {
           products.push(...child.products);
         })
@@ -104,12 +112,7 @@ const updateCategory = async (req, res) => {
 const deleteCategory = async (req, res) => {
   try {
     const { id } = req.params;
-
-    await Category.destroy({
-      where: {
-        id: id
-      }
-    })
+    await Category.destroy({ where: { id }})
 
     return res.send({
       message: "Deleted Size by id:" + id

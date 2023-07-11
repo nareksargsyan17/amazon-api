@@ -3,9 +3,7 @@ const { Size } = require('../models');
 
 async function existsSize(size) {
   const sizeField = await Size.findOne({
-    where: {
-      size : size,
-    }
+    where: { size }
   });
 
   if (sizeField) {
@@ -17,7 +15,6 @@ async function existsSize(size) {
 
 const sizeSchema = Joi.object({
   size: Joi.string()
-    .alphanum()
     .required()
     .external(existsSize)
     .messages({

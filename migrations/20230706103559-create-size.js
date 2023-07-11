@@ -13,7 +13,6 @@ module.exports = {
       size: {
         type: STRING,
         allowNull: false,
-        unique: true
       }
     });
   },
