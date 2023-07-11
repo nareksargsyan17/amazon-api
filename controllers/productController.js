@@ -1,4 +1,4 @@
-const { Product, Category } = require('../models');
+const { Product, Category, Image } = require('../models');
 const { Op } = require("sequelize");
 const { productSchema } = require("../validations/productSchema");
 const pagination = require("../pagination/pagination");
@@ -11,11 +11,28 @@ const addProduct = async (req, res) => {
 
     return res.status(200).send(product);
   } catch (error) {
-
     return res.status(500).json({
       message: error.message
     });
   }
+}
+
+const uploadImages = async (req, res) => {
+  const { id } = req.params;
+  const imagesArr = req.files["gallery"].map(el => {
+    return {
+      productId: id,
+      path : el.path,
+    };
+  });
+  imagesArr.push({
+    productId: id,
+    path : req.files["main"][0].path,
+    isMain: true
+  });
+  const images = await Image.bulkCreate(imagesArr);
+
+  return res.status(200).send(images);
 }
 
 const getAllProducts = async (req, res) => {
@@ -24,6 +41,13 @@ const getAllProducts = async (req, res) => {
     const products = await Product.findAll({
       ...pagination(page, limit, sortDirection, sortWith),
       include: [
+        {
+          model: Image,
+          as: "images",
+          where: {
+            isMain: true
+          }
+        },
         { model: Category }
       ],
       where: {
@@ -56,7 +80,14 @@ const getAllPublishedProducts = async (req, res) => {
     const products = await Product.findAll({
       ...pagination(page, limit, sortDirection, sortWith),
       include: [
-        {model: Category}
+        {
+          model: Image,
+          as: "images",
+          where: {
+            isMain: true
+          }
+        },
+        { model: Category }
       ],
       where: {
         [Op.and]: [
@@ -94,6 +125,10 @@ const getProductById = async (req, res) => {
       id,
       {
         include: [
+          {
+            model: Image,
+            as: "images"
+          },
           { model: Category }
         ]
       })
@@ -105,7 +140,6 @@ const getProductById = async (req, res) => {
     });
   }
 }
-
 
 const updateProduct = async (req, res) => {
   try {
@@ -119,6 +153,10 @@ const updateProduct = async (req, res) => {
     const product = await Product.findByPk(
       id, {
         includes: [
+          {
+            model: Image,
+            as: "images"
+          },
           { model: Category },
         ]
       })
@@ -154,5 +192,6 @@ module.exports = {
   getAllPublishedProducts,
   updateProduct,
   getProductById,
-  deleteProduct
+  deleteProduct,
+  uploadImages
 }

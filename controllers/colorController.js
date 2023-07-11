@@ -20,15 +20,9 @@ const addColor = async (req, res) => {
 const getAllColors = async (req, res) => {
   try {
     const colors = await Color.findAll();
-    if (colors.length === 0) {
-      return res.json({
-        message: "There are not Colors"
-      });
-    }
 
     return res.status(200).send(colors);
   } catch (error) {
-
     return res.status(500).json({
       message: "Something is wrong"
     });
@@ -37,7 +31,7 @@ const getAllColors = async (req, res) => {
 
 const getColor = async (req, res) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
     const color = await Color.findByPk(id);
 
     return res.status(200).send(color);
@@ -56,7 +50,7 @@ const updateColor = async (req, res) => {
     await Color.update(
       data,
       {
-        where: { id: id },
+        where: { id },
       })
     const updatedColor = await Color.findByPk(id);
 
@@ -73,7 +67,7 @@ const deleteColor = async (req, res) => {
   try {
     const { id } = req.params;
     await Color.destroy({
-      where: { id: id }
+      where: { id }
     });
 
     return res.status(200).send("Deleted color by id:" + id);

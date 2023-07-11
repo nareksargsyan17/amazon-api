@@ -18,6 +18,11 @@ module.exports = (sequelize) => {
         as: "products",
         onDelete: "cascade"
       })
+
+      this.hasMany(Category, {
+        foreignKey: "parentId",
+        as: "subCategories",
+      })
     }
   }
   Category.init({

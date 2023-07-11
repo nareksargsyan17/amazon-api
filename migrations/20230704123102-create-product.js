@@ -35,9 +35,7 @@ module.exports = {
         references: {
           model: 'categories',
           key: 'id',
-        },
-        onDelete: "cascade",
-        onUpdate: "cascade",
+        }
       },
       colors: {
         type: JSON,

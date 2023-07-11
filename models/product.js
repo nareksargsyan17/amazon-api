@@ -11,12 +11,18 @@ module.exports = (sequelize,) => {
      */
     static associate(models) {
       // define association here
-      const { Category } = models;
+      const { Category, Image } = models;
 
       this.belongsTo(Category, {
         foreignKey: "categoryId",
         onDelete: "cascade"
       });
+
+      this.hasMany(Image, {
+        foreignKey: "productId",
+        as: "images",
+        onDelete: "cascade"
+      })
     }
   }
   Product.init({

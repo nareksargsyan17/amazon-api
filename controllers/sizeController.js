@@ -18,11 +18,6 @@ const addSize = async (req, res) => {
 const getAllSizes = async (req, res) => {
   try {
     const sizes = await Size.findAll();
-    if (sizes.length === 0) {
-      return res.json({
-        message: "There are not Sizes"
-      });
-    }
 
     return res.status(200).send(sizes);
   } catch (error) {

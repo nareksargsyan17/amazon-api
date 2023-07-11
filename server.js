@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const apiRouter = require("./routes/api");
-
+const bodyParser = require('body-parser');
 
 const app = express();
 const port = 3001;
@@ -14,8 +14,8 @@ const corsOption = {
 //middleware
 
 app.use(cors(corsOption));
-app.use(express.json());
-app.use(express.urlencoded({extended : true}));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended : true}));
 
 
 //routers

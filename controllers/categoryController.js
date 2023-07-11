@@ -1,6 +1,5 @@
 const { Category, Product } = require("../models");
 const { categorySchema } = require("../validations/categorySchema");
-const { Op } = require("sequelize");
 
 const addCategory = async (req, res) => {
   try {
@@ -31,20 +30,10 @@ const getAllCategories = async (req, res) => {
 const getCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    const categories = await Category.findAll({
-      where: {
-        [Op.or]: [
-          {
-            parentId: id
-          },
-          {
-            id: id
-          }
-        ]
-      }
-    });
+    const category  = await Category.findByPk(id);
+    const subCategories = await category.getSubCategories();
 
-    return res.status(200).send(categories);
+    return res.status(200).send({category, subCategories});
   } catch (error) {
     return res.status(500).send({
       message: "Something is wrong"
@@ -96,7 +85,7 @@ const updateCategory = async (req, res) => {
     await Category.update(
       data,
       {
-        where: { id: id },
+        where: { id },
       })
     const updatedCategory = await Category.findByPk(id);
 
