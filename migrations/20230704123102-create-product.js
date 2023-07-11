@@ -37,6 +37,14 @@ module.exports = {
           key: 'id',
         }
       },
+      userId: {
+        type: INTEGER,
+        allowNull: false,
+        references: {
+          model: 'users',
+          key: 'id',
+        }
+      },
       colors: {
         type: JSON,
         allowNull: false

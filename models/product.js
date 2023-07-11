@@ -11,10 +11,15 @@ module.exports = (sequelize,) => {
      */
     static associate(models) {
       // define association here
-      const { Category, Image } = models;
+      const { Category, Image, User } = models;
 
       this.belongsTo(Category, {
         foreignKey: "categoryId",
+        onDelete: "cascade"
+      });
+
+      this.belongsTo(User, {
+        foreignKey: "userId",
         onDelete: "cascade"
       });
 
@@ -50,6 +55,14 @@ module.exports = (sequelize,) => {
       references: {
         model: "categories",
         key: "id",
+      },
+      userId: {
+        type: INTEGER,
+        allowNull: false,
+        references: {
+          model: 'users',
+          key: 'id',
+        }
       }
     },
     colors: {
