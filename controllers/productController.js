@@ -18,21 +18,27 @@ const addProduct = async (req, res) => {
 }
 
 const uploadImages = async (req, res) => {
-  const { id } = req.params;
-  const imagesArr = req.files["gallery"].map(el => {
-    return {
+  try {
+    const { id } = req.params;
+    const imagesArr = req.files["gallery"].map(el => {
+      return {
+        productId: id,
+        path : el.path,
+      };
+    });
+    imagesArr.push({
       productId: id,
-      path : el.path,
-    };
-  });
-  imagesArr.push({
-    productId: id,
-    path : req.files["main"][0].path,
-    isMain: true
-  });
-  const images = await Image.bulkCreate(imagesArr);
+      path : req.files["main"][0].path,
+      isMain: true
+    });
+    const images = await Image.bulkCreate(imagesArr);
 
-  return res.status(200).send(images);
+    return res.status(200).send(images);
+  } catch (error) {
+    return res.json({
+      message: "Something is wrong"
+    })
+  }
 }
 
 const getAllProducts = async (req, res) => {

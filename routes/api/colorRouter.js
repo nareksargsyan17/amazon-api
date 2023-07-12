@@ -1,25 +1,15 @@
 const router = require("express").Router();
 const colorController = require("../../controllers/colorController");
-const { Color } = require("../../models");
+const validateId = require("../../middleware/colorMiddleware");
 
-async function validateId(req, res, next) {
-  const { id } = req.params;
-  const color = await Color.findByPk(id);
 
-  if (color) {
-    req.color = color;
-    next();
-  } else {
-    res.status(404).json({
-      message: "id not found"
-    })
-  }
-}
 
-router.post("/addColor", colorController.addColor);
-router.get("/getAllColors", colorController.getAllColors);
-router.get("/getColor/:id", validateId, colorController.getColor);
-router.put("/updateColor/:id", validateId, colorController.updateColor);
-router.delete("/deleteColor/:id", validateId, colorController.deleteColor);
+router.post("/add", colorController.addColor);
+router.get("/get_all", colorController.getAllColors);
+
+router.use("/:id", validateId);
+router.get("/get/:id", colorController.getColor);
+router.put("/update/:id", colorController.updateColor);
+router.delete("/delete/:id", colorController.deleteColor);
 
 module.exports = router;

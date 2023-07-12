@@ -15,6 +15,8 @@ const productSchema = Joi.object({
   categoryId: Joi.number()
     .integer()
     .required(),
+  userId: Joi.number()
+    .integer(),
   colors: Joi.string()
     .required(),
   sizes: Joi.string()

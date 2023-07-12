@@ -56,13 +56,13 @@ module.exports = (sequelize,) => {
         model: "categories",
         key: "id",
       },
-      userId: {
-        type: INTEGER,
-        allowNull: false,
-        references: {
-          model: 'users',
-          key: 'id',
-        }
+    },
+    userId: {
+      type: INTEGER,
+      allowNull: false,
+      references: {
+        model: 'users',
+        key: 'id',
       }
     },
     colors: {

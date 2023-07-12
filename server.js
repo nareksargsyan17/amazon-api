@@ -17,6 +17,10 @@ app.use(cors(corsOption));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended : true}));
 
+// inside public directory.
+app.use(express.static('public'));
+app.use('/images', express.static('images'));
+
 //routers
 
 app.use("/api", apiRouter);
