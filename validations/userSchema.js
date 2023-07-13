@@ -29,7 +29,9 @@ const userSchema = Joi.object({
   re_password: Joi.any()
     .equal(Joi.ref('password'))
     .required(),
-  role: Joi.boolean()
+  role: Joi.boolean(),
+  verified: Joi.boolean(),
+  token: Joi.string()
 })
 
 exports.userSchema = userSchema;

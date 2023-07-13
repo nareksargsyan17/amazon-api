@@ -10,12 +10,16 @@ module.exports = (sequelize) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      const { Product } = models;
+      const { Product, Address, Order} = models;
 
       this.hasMany(Product, {
         foreignKey: "userId",
         as: "products"
       })
+
+      this.hasMany(Address, { foreignKey: "userId", as: "addresses" });
+
+      this.belongsToMany(Product, {through: Order, foreignKey: "userId"});
     }
   }
   User.init({
@@ -39,6 +43,14 @@ module.exports = (sequelize) => {
       type: BOOLEAN,
       defaultValue: false
     },
+    verified: {
+      type: BOOLEAN,
+      defaultValue: false
+    },
+    token: {
+      type: STRING,
+      defaultValue: null
+    }
   }, {
     freezeTableName: true,
     sequelize,

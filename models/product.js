@@ -11,7 +11,7 @@ module.exports = (sequelize,) => {
      */
     static associate(models) {
       // define association here
-      const { Category, Image, User } = models;
+      const { Category, Image, User, Order } = models;
 
       this.belongsTo(Category, {
         foreignKey: "categoryId",
@@ -27,7 +27,9 @@ module.exports = (sequelize,) => {
         foreignKey: "productId",
         as: "images",
         onDelete: "cascade"
-      })
+      });
+
+      this.belongsToMany(User, {through: Order, foreignKey: "productId"});
     }
   }
   Product.init({

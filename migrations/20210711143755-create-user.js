@@ -30,6 +30,14 @@ module.exports = {
         type: BOOLEAN,
         defaultValue: false
       },
+      verified: {
+        type: BOOLEAN,
+        defaultValue: false
+      },
+      token: {
+        type: STRING,
+        defaultValue: null
+      },
       createdAt: {
         allowNull: false,
         type: DATE
