@@ -5,7 +5,6 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const { sendingMail } = require("../verification/userVerification");
 const { changePassSchema } = require("../validations/changePassSchema");
-require('dotenv').config();
 
 const registration = async (req, res) => {
   try {
@@ -20,7 +19,7 @@ const registration = async (req, res) => {
 
     if (user) {
       await sendingMail({
-        from: "narek.sargsyan.2000.g@gmail.com",
+        from: process.env.EMAIL,
         to: `${email}`,
         subject: "Account Verification Link",
         text: `
@@ -80,7 +79,6 @@ const verifyEmail = async (req, res) => {
           }
         );
 
-
         if (!updated) {
           return res.status(500).send({msg: "Your account not verified"});
         } else {
@@ -103,7 +101,7 @@ const login = async (req, res) => {
 
     const user = await User.findOne({ where: { email }});
 
-    let token = jwt.sign({ id: user.id, role: user.role }, process.env.SECRET_KEY, {
+    let token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
       expiresIn: 24 * 60 * 60 * 1000,
     });
 
@@ -111,12 +109,12 @@ const login = async (req, res) => {
       maxAge:  24 * 60 * 60,
       httpOnly: true,
     });
-    const {id, firstName, lastName, createdAt} = user;
+    const { id, firstName, lastName, createdAt } = user;
 
     const data = {
       id, firstName, lastName, email, createdAt
     }
-
+    req.user = data;
     return res.status(201).send(data);
   } catch (error) {
     return res.status(500).json({
@@ -127,7 +125,7 @@ const login = async (req, res) => {
 
 const changePassword = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.user;
     const { ...data } = req.body;
     await changePassSchema.validateAsync(data);
 

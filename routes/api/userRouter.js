@@ -1,20 +1,16 @@
 const router = require("express").Router();
 const userController = require("../../controllers/userController");
-const userMiddleware = require("../../middleware/userMiddleware");
+const verify = require("../../middleware/userVerifyMiddleware");
 const checkingPass = require("../../middleware/changePassMiddleware");
+const validateId = require("../../middleware/userMiddleware");
+const auth = require("../../middleware/authMiddleware");
 
 
 
 router.post("/registration", userController.registration);
-router.get("/verify_email/:id/:token", userController.verifyEmail);
-router.post("/login", userMiddleware, userController.login);
-router.put("/change_pass/:id", checkingPass, userController.changePassword);
+router.post("/login", verify, userController.login);
 
-// router.get("/get_all", userController.getAllSizes);
-//
-// router.use("/:id", validateId);
-//
-// router.get("/get/:id", userController.getSize);
-// router.delete("/delete/:id", userController.deleteSize);
+router.get("/verify_email/:id/:token", validateId, userController.verifyEmail);
+router.put("/change_pass", auth,  checkingPass, userController.changePassword);
 
 module.exports = router;

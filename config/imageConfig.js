@@ -12,7 +12,7 @@ const fileStorage = multer.diskStorage({
     if (!array_of_allowed_files.includes(file_extension) || !array_of_allowed_file_types.includes(file.mimetype)) {
       throw Error('Invalid file');
     }
-    cb(null, "./images");
+    cb(null, "./public/images");
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + "-" + file.originalname);

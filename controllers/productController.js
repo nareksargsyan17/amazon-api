@@ -1,11 +1,13 @@
 const { Product, Category, Image } = require('../models');
 const { Op } = require("sequelize");
 const { productSchema } = require("../validations/productSchema");
+const { productUpdateSchema } = require("../validations/productUpdateSchema");
 const pagination = require("../pagination/pagination");
 
 const addProduct = async (req, res) => {
   try {
     const { ...data } = req.body;
+    data.userId = req.user.id;
     await productSchema.validateAsync(data);
     const product = await Product.create(data);
 
@@ -151,11 +153,12 @@ const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const { ...data } = req.body;
-    await productSchema.validateAsync(data);
+    await productUpdateSchema.validateAsync(data);
     await Product.update(
       data,
       { where: { id }}
     )
+    console.log(data)
     const product = await Product.findByPk(
       id, {
         includes: [
@@ -166,7 +169,7 @@ const updateProduct = async (req, res) => {
           { model: Category },
         ]
       })
-
+    console.log(product)
     return res.status(200).send(product);
   } catch (error) {
     return res.json({
