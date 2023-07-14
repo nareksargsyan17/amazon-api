@@ -1,5 +1,5 @@
 const { userSchema } = require("../validations/userSchema");
-const { User } = require("../models");
+const { User, Product } = require("../models");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
@@ -147,9 +147,17 @@ const changePassword = async (req, res) => {
   }
 }
 
+const getOrders = async (req, res) => {
+  const orders = await Product.findAll({
+    include: User
+  })
+  res.status(200).send(orders);
+}
+
 module.exports = {
   registration,
   verifyEmail,
   login,
-  changePassword
+  changePassword,
+  getOrders
 }

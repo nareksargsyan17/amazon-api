@@ -5,6 +5,7 @@ module.exports = async function auth(req, res, next) {
   try {
     const token = req.headers.authorization.split(" ")[1];
     const { id } = jwt.verify(token, process.env.SECRET_KEY);
+    console.log()
     const user = await User.findByPk(id);
     if (user) {
       req.user = user;

@@ -12,5 +12,6 @@ router.post("/login", verify, userController.login);
 
 router.get("/verify_email/:id/:token", validateId, userController.verifyEmail);
 router.put("/change_pass", auth,  checkingPass, userController.changePassword);
+router.get("/orders", auth, userController.getOrders);
 
 module.exports = router;

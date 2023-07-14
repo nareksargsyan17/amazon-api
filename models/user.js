@@ -19,7 +19,7 @@ module.exports = (sequelize) => {
 
       this.hasMany(Address, { foreignKey: "userId", as: "addresses" });
 
-      this.belongsToMany(Product, {through: Order, foreignKey: "userId"});
+      this.belongsToMany(Product, {as: "order", through: Order, foreignKey: "userId"});
     }
   }
   User.init({
