@@ -1,16 +1,22 @@
 const Joi = require("joi");
 const { User } = require("../models");
+const {Op} = require("sequelize");
 
 async function existsUser(email) {
-  const emailFieald = await User.findOne({
-    where: { email }
+  const user = await User.findOne({
+    where: {
+      [Op.and]: [
+        { email },
+        { verified: true }
+      ]
+    }
   });
 
-  if (emailFieald) {
+  if (user) {
     throw new Error('Email already exists');
   }
 
-  return email;
+  return user;
 }
 
 const userSchema = Joi.object({

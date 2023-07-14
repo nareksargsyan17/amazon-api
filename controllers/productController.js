@@ -143,6 +143,7 @@ const getProductById = async (req, res) => {
 
     return res.status(200).send(product);
   } catch (error) {
+    console.log(error)
     return res.status(500).send({
       message: "Something is wrong"
     });

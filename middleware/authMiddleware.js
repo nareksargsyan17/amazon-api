@@ -4,14 +4,16 @@ const jwt = require("jsonwebtoken");
 module.exports = async function auth(req, res, next) {
   try {
     const token = req.headers.authorization.split(" ")[1];
+    console.log(token)
     const { id } = jwt.verify(token, process.env.SECRET_KEY);
-    console.log()
+    console.log(id)
     const user = await User.findByPk(id);
+    console.log(user)
     if (user) {
       req.user = user;
       next();
     } else {
-      res.status(404).json({
+      return res.status(404).json({
         message: "id not found"
       })
     }

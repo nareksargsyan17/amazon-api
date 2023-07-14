@@ -1,6 +1,6 @@
 const router = require("express").Router();
-const sizeController = require("../../controllers/sizeController");
-const validateId = require("../../middleware/sizeMiddleware");
+const sizeController = require("../../../controllers/sizeController");
+const validateId = require("../../../middleware/sizeMiddleware");
 
 
 

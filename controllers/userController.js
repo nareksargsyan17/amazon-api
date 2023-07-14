@@ -1,5 +1,5 @@
 const { userSchema } = require("../validations/userSchema");
-const { User, Product } = require("../models");
+const { User } = require("../models");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
@@ -10,12 +10,16 @@ const registration = async (req, res) => {
   try {
     const { ...data } = req.body;
     await userSchema.validateAsync(data);
-    data.password = await bcrypt.hash(data.password, 10);
-    const user = await User.create({
-      ...data,
-      token: crypto.randomBytes(16).toString("hex")
-    });
-    const {firstName, lastName, email} = data;
+    let user = await User.findOne({ where: { email: data.email } })
+    if (!user) {
+      data.password = await bcrypt.hash(data.password, 10);
+      user = await User.create({
+        ...data,
+        token: crypto.randomBytes(16).toString("hex")
+      });
+    }
+    const {firstName, lastName, email, token} = user;
+
 
     if (user) {
       await sendingMail({
@@ -23,8 +27,8 @@ const registration = async (req, res) => {
         to: `${email}`,
         subject: "Account Verification Link",
         text: `
-        Hello, ${firstName}  ${lastName} Please verify your email byclicking this link :
-        ${process.env.VERIFY_LINK}/${user.id}/${user.token} `,
+        Hello, ${firstName}  ${lastName} Please verify your email by clicking this link :
+        ${process.env.VERIFY_LINK}/${user.id}/${token} `,
       });
     }
 
@@ -32,6 +36,7 @@ const registration = async (req, res) => {
       message: "Please verify your email"
     })
   } catch (error) {
+    console.log(error)
     return res.status(500).json({
       message: error.message
     })
@@ -99,23 +104,16 @@ const login = async (req, res) => {
   try {
     const { email } = req.body;
 
-    const user = await User.findOne({ where: { email }});
+    const user = await User.findOne({ where: { email }, exclude: ["password"]});
 
     let token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
       expiresIn: 24 * 60 * 60 * 1000,
     });
 
-    res.cookie("jwt", token, {
-      maxAge:  24 * 60 * 60,
-      httpOnly: true,
+    return res.status(201).send({
+      data: user,
+      token
     });
-    const { id, firstName, lastName, createdAt } = user;
-
-    const data = {
-      id, firstName, lastName, email, createdAt
-    }
-    req.user = data;
-    return res.status(201).send(data);
   } catch (error) {
     return res.status(500).json({
       message: "Something is wrong!"
@@ -147,12 +145,18 @@ const changePassword = async (req, res) => {
   }
 }
 
-const getOrders = async (req, res) => {
-  const orders = await Product.findAll({
-    include: User
-  })
+const getProducts = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id)
+    const products = await user.getProducts({joinTableAttributes: []})
 
-  res.status(200).send(orders);
+    return res.status(200).send(products);
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({
+      message: "Something is wrong"
+    })
+  }
 }
 
 module.exports = {
@@ -160,5 +164,5 @@ module.exports = {
   verifyEmail,
   login,
   changePassword,
-  getOrders
+  getProducts
 }

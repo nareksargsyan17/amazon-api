@@ -29,7 +29,7 @@ module.exports = (sequelize,) => {
         onDelete: "cascade"
       });
 
-      this.belongsToMany(User, {through: Order, foreignKey: "productId"});
+      this.belongsToMany(User, {through: Order, foreignKey: "productId", otherKey: "userId"});
     }
   }
   Product.init({

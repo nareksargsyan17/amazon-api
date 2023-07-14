@@ -1,6 +1,6 @@
 const router = require("express").Router();
-const { addAddress, chooseMain, getAllAddresses } = require("../../controllers/addressController");
-const auth = require("../../middleware/authMiddleware");
+const { addAddress, chooseMain, getAllAddresses } = require("../../../../controllers/addressController");
+const auth = require("../../../../middleware/authMiddleware");
 
 
 router.use(auth);

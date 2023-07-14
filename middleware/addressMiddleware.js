@@ -4,14 +4,14 @@ module.exports = async function validateId(req, res, next) {
   try {
     const { id } = req.params;
     const { userId } = req.body;
-    const category = await Address.findByPk(id);
-    if (userId === category.userId) {
+    const address = await Address.findByPk(id);
+    if (userId === address.userId) {
       const user = await User.findByPk(userId);
-      if (category) {
+      if (address) {
         if (user) {
 
         }
-        req.category = category;
+        req.address = address;
         next();
       }
     } else {

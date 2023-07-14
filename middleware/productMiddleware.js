@@ -9,7 +9,7 @@ module.exports = async function validateId(req, res, next) {
       req.product = product;
       next();
     } else {
-      res.status(404).json({
+      return res.status(404).json({
         message: "id not found"
       })
     }

@@ -15,6 +15,8 @@ module.exports = (sequelize) => {
         foreignKey: "productId",
         onDelete : "cascade"
       })
+
+      // @TODO add after delete hook to delete file from public
     }
   }
   Image.init({
