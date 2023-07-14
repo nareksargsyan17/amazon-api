@@ -151,6 +151,7 @@ const getOrders = async (req, res) => {
   const orders = await Product.findAll({
     include: User
   })
+
   res.status(200).send(orders);
 }
 
