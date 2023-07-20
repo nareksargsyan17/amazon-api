@@ -1,4 +1,5 @@
 "use strict";
+const fs = require('fs');
 const {
   Model, INTEGER, STRING, TEXT, BOOLEAN, DATE, JSON
 } = require("sequelize");
@@ -26,10 +27,17 @@ module.exports = (sequelize,) => {
       this.hasMany(Image, {
         foreignKey: "productId",
         as: "images",
-        onDelete: "cascade"
+        onDelete: "cascade",
+        hooks: true
       });
 
       this.belongsToMany(User, {through: Order, foreignKey: "productId", otherKey: "userId"});
+      this.beforeBulkDestroy(async (data) => {
+        const images = await Image.findAll({ where: { productId : data.where.id } });
+        images.forEach(elem => {
+            fs.unlinkSync(elem.dataValues.path);
+        })
+      });
     }
   }
   Product.init({

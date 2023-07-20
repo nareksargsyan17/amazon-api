@@ -1,4 +1,4 @@
-const { Category, Product } = require("../models");
+const { Category, Product, Image } = require("../models");
 const { categorySchema } = require("../validations/categorySchema");
 
 const addCategory = async (req, res) => {
@@ -18,9 +18,35 @@ const addCategory = async (req, res) => {
 const getAllCategories = async (req, res) => {
   try {
     const categories = await Category.findAll({ where: { parentId: null }});
+    const data = [];
+    for (const index in categories) {
+      const category = await Category.findByPk(categories[index].id);
+      const subCategories = await category.getSubCategories();
+      const subData = subCategories.map(elem => {
+        return {
+          key: elem.id,
+          title: elem.name,
+          children: []
+        }
+      })
 
-    return res.status(200).send(categories);
+      data.push({key: category.id, title: category.name, children: subData});
+
+      for (let i = 0; i < data[index].children.length; i++) {
+        const subCategories = await Category.findAll({where: { parentId : data[index].children[i].key }});
+        const subData = subCategories.map(elem => {
+          return {
+            key: elem.id,
+            title: elem.name,
+          }
+        })
+        data[index].children[i].children.push(...subData);
+      }
+     }
+
+    return res.status(200).send({data : data});
   } catch (error) {
+    console.log(error)
     return res.status(500).send({
       message: "Something is wrong"
     });
@@ -44,18 +70,29 @@ const getProductsByCategory = async (req, res) => {
   try {
     const { id } = req.params;
     const products = [];
-    const category = await Category.findByPk(id, { include: { model: Product, as: "products" }});
-    products.push(...category.products);
+    const category = await Category.findByPk(id, { include: [{ model: Product, as: "products", include: [{ model: Image, as: "images", where: { isMain: true } }] }]});
+    products.push(category.id);
     await subcategory(category);
 
     async function subcategory(category) {
       try {
         const subCategories = await Category.findAll({
           where: { parentId: category.id },
-          include: { model: Product, as: "products" }
+          include: [
+            {
+              model: Product,
+              as: "products",
+              include: [{
+                  model: Image,
+                  as: "images",
+                  where: {
+                    isMain: true
+                  }
+                }]
+            }]
         });
         subCategories.forEach(child => {
-          products.push(...child.products);
+          products.push(child.id);
         })
         for (let i = 0; i < subCategories.length; i++) {
           if (subCategories[i].id) {
@@ -69,11 +106,13 @@ const getProductsByCategory = async (req, res) => {
 
     return res.status(200).send(products);
   } catch (error) {
+    console.log(error)
     return res.status(500).send({
       message: "Something is wrong"
     });
   }
 }
+
 
 const updateCategory = async (req, res) => {
   try {

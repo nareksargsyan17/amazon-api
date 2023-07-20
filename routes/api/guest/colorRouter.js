@@ -1,13 +1,13 @@
 const router = require("express").Router();
-const colorController = require("../../../controllers/colorController");
+const { getColor, getAllColors } = require("../../../controllers/colorController");
 const validateId = require("../../../middleware/colorMiddleware");
 
 
-router.get("/get_all", colorController.getAllColors);
+router.get("/get_all", getAllColors);
 
 router.use("/:id", validateId);
 
-router.get("/get/:id", colorController.getColor);
+router.get("/get/:id", getColor);
 
 
 module.exports = router;

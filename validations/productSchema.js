@@ -17,9 +17,9 @@ const productSchema = Joi.object({
     .required(),
   userId: Joi.number()
     .integer(),
-  colors: Joi.string()
+  colors: Joi.array()
     .required(),
-  sizes: Joi.string()
+  sizes: Joi.array()
     .required()
 })
 

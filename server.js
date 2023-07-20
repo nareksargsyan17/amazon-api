@@ -9,7 +9,7 @@ const port = 3001;
 
 
 const corsOption = {
-    origin: "https://localhost:8081"
+    origin: "http://localhost:3000"
 }
 
 //middleware
@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({extended : true}));
 
 // inside public directory.
 app.use(express.static('public'));
-app.use('/images', express.static('images'));
+app.use('/public', express.static('public'));
 
 //routers
 

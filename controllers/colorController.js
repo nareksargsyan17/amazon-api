@@ -21,7 +21,7 @@ const getAllColors = async (req, res) => {
   try {
     const colors = await Color.findAll();
 
-    return res.status(200).send(colors);
+    return res.status(200).send({data : colors});
   } catch (error) {
     return res.status(500).json({
       message: "Something is wrong"

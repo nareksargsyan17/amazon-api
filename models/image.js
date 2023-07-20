@@ -13,10 +13,8 @@ module.exports = (sequelize) => {
       const { Product } = models;
       this.belongsTo(Product, {
         foreignKey: "productId",
-        onDelete : "cascade"
+        onDelete : "cascade",
       })
-
-      // @TODO add after delete hook to delete file from public
     }
   }
   Image.init({

@@ -19,7 +19,7 @@ const getAllSizes = async (req, res) => {
   try {
     const sizes = await Size.findAll();
 
-    return res.status(200).send(sizes);
+    return res.status(200).send({data : sizes});
   } catch (error) {
     return res.status(500).json({
       message: "Something is wrong"

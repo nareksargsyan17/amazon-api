@@ -1,13 +1,13 @@
 const router = require("express").Router();
-const categoryController = require("../../../../controllers/categoryController.js");
+const { addCategory, updateCategory, deleteCategory } = require("../../../../controllers/categoryController");
 const categoryMiddleware = require("../../../../middleware/categoryMiddleware");
 
-router.post("/add", categoryController.addCategory);
+router.post("/add", addCategory);
 
 router.use("/:id", categoryMiddleware)
 
-router.put("/update/:id", categoryController.updateCategory);
-router.delete("/delete/:id", categoryController.deleteCategory);
+router.put("/update/:id", updateCategory);
+router.delete("/delete/:id", deleteCategory);
 
 
 module.exports = router;

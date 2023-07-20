@@ -1,15 +1,14 @@
 const router = require("express").Router();
-const categoryController = require("../../../controllers/categoryController.js");
+const { getAllCategories, getProductsByCategory, getCategory } = require("../../../controllers/categoryController");
 const categoryMiddleware = require("../../../middleware/categoryMiddleware");
 
 
 
-router.get("/get_all", categoryController.getAllCategories);
+router.get("/get_all", getAllCategories);
 
-router.use("/:id", categoryMiddleware)
 
-router.get("/products/:id", categoryController.getProductsByCategory);
-router.get("/get/:id", categoryController.getCategory);
+router.get("/:id/products", categoryMiddleware, getProductsByCategory);
+router.get("/get/:id",categoryMiddleware, getCategory);
 
 
 module.exports = router;

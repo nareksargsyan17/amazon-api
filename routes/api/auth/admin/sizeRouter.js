@@ -1,15 +1,12 @@
 const router = require("express").Router();
-const sizeController = require("../../../../controllers/sizeController");
+const { addSize, updateSize, deleteSize } = require("../../../../controllers/sizeController");
 const validateId = require("../../../../middleware/sizeMiddleware");
 
-
-
-
-router.post("/add", sizeController.addSize);
+router.post("/add", addSize);
 
 router.use("/:id", validateId);
 
-router.put("/update/:id", sizeController.updateSize);
-router.delete("/delete/:id", sizeController.deleteSize);
+router.put("/update/:id", updateSize);
+router.delete("/delete/:id", deleteSize);
 
 module.exports = router;

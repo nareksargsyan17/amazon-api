@@ -19,7 +19,8 @@ module.exports = {
         references: {
           model: 'products',
           key: 'id',
-        }
+        },
+        onDelete: "cascade"
       },
       isMain: {
         type: BOOLEAN,
