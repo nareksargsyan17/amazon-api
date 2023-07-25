@@ -16,11 +16,13 @@ module.exports = (sequelize,) => {
 
       this.belongsTo(Category, {
         foreignKey: "categoryId",
+        as : "category",
         onDelete: "cascade"
       });
 
       this.belongsTo(User, {
         foreignKey: "userId",
+        as: "owner",
         onDelete: "cascade"
       });
 

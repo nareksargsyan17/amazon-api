@@ -34,10 +34,7 @@ const userSchema = Joi.object({
     .required(),
   re_password: Joi.any()
     .equal(Joi.ref('password'))
-    .required(),
-  role: Joi.boolean(),
-  verified: Joi.boolean(),
-  token: Joi.string()
+    .required()
 })
 
 exports.userSchema = userSchema;

@@ -10,16 +10,19 @@ const registration = async (req, res) => {
   try {
     const { ...data } = req.body;
     await userSchema.validateAsync(data);
-    let user = await User.findOne({ where: { email: data.email } })
+    let user = await User.findOne({ where: { email: data.email } });
     if (!user) {
       data.password = await bcrypt.hash(data.password, 10);
       user = await User.create({
         ...data,
         token: crypto.randomBytes(16).toString("hex")
       });
+    } else {
+      const {firstName, lastName} = data;
+      const password = await bcrypt.hash(data.password, 10);
+      await user.update({firstName, lastName, password})
     }
     const {firstName, lastName, email, token} = user;
-
 
     if (user) {
       await sendingMail({
@@ -33,11 +36,11 @@ const registration = async (req, res) => {
     }
 
     return res.status(200).send({
-      message: "Please verify your email"
+      successMessage: "Please verify your email"
     })
   } catch (error) {
-    console.log(error)
-    return res.status(500).json({
+    console.log(error.message)
+    return res.status(500).send({
       message: error.message
     })
   }
@@ -63,13 +66,13 @@ const verifyEmail = async (req, res) => {
       if (!user) {
 
         return res.status(401).send({
-          msg: "We were unable to find a user for this verification. Please SignUp!",
+          message: "We were unable to find a user for this verification.",
         });
 
       } else if (user.verified) {
         return res
           .status(200)
-          .send("User has been already verified. Please Login");
+          .send({successMessage: "User has been already verified."});
 
       } else {
         const updated = await User.update(
@@ -85,11 +88,11 @@ const verifyEmail = async (req, res) => {
         );
 
         if (!updated) {
-          return res.status(500).send({msg: "Your account not verified"});
+          return res.status(500).send({message: "Your account not verified."});
         } else {
           return res
             .status(200)
-            .send("Your account has been successfully verified");
+            .send({successMessage: "Your account has been successfully verified."});
         }
       }
     }
@@ -104,15 +107,17 @@ const login = async (req, res) => {
   try {
     const { email } = req.body;
 
-    const user = await User.findOne({ where: { email }, exclude: ["password"]});
+    const user = await User.findOne({ where: { email }, attributes: {exclude: ["password", "role", "token", "verified"]}});
 
     let token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
       expiresIn: 24 * 60 * 60 * 1000,
     });
 
-    return res.status(201).send({
-      data: user,
-      token
+    return res.status(200).send({
+      data: {
+        user,
+        token
+      }
     });
   } catch (error) {
     return res.status(500).json({

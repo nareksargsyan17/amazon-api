@@ -1,4 +1,4 @@
-const { Product, Category, Image } = require('../models');
+const { Product, Category, Image, Color, Size, User } = require('../models');
 const { Op } = require("sequelize");
 const { productSchema } = require("../validations/productSchema");
 const { productUpdateSchema } = require("../validations/productUpdateSchema");
@@ -97,7 +97,7 @@ const getAllPublishedProducts = async (req, res) => {
             isMain: true
           }
         },
-        { model: Category }
+        { model: Category, as: "category" }
       ],
       where: {
         [Op.and]: [
@@ -159,6 +159,66 @@ const getAllPublishedProducts = async (req, res) => {
   }
 }
 
+const getCartProducts = async (req, res) => {
+  try {
+    const { products, savedProducts } = req.body;
+    console.log(products)
+    const idProducts = products.map(product => product.id);
+    const idSavedProducts = savedProducts.map(product => product.id);
+    const fetchedProducts = await Product.findAll({
+      where: {
+        id: {
+          [Op.in] : [...idProducts, ...idSavedProducts]
+          }
+        },
+      include: [
+        {model: Category, as: "category"},
+        {model: Image, as: "images"}
+      ]
+      })
+    const newProducts = [];
+    const newSavedProducts = [];
+    fetchedProducts.forEach(product => {
+      const currProduct = products.find(elem => elem.id === product.id);
+      const currSavedProduct = savedProducts.find(elem => elem.id === product.id);
+      if (currProduct && !currSavedProduct) {
+        newProducts.push({
+          id: product.id,
+          name: product.name,
+          brand: product.brand,
+          price: product.price,
+          category: product.category.name,
+          image: product.images.find(image => image.isMain === true).path,
+          size: currProduct.size,
+          color: currProduct.color,
+          count: currProduct.count
+        })
+      } else {
+        newSavedProducts.push({
+          id: product.id,
+          name: product.name,
+          brand: product.brand,
+          price: product.price,
+          category: product.category.name,
+          image: product.images.find(image => image.isMain === true).path,
+          size: currSavedProduct.size,
+          color: currSavedProduct.color,
+          count: currSavedProduct.count
+        })
+      }
+
+    })
+    return res.status(200).send({data : {
+      products: newProducts,
+      savedProducts: newSavedProducts
+    }})
+  } catch (error) {
+      return res.status(500).send({
+        message: error.message
+      })
+  }
+}
+
 const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -170,11 +230,28 @@ const getProductById = async (req, res) => {
             model: Image,
             as: "images"
           },
-          { model: Category }
+          { model: Category, as : "category" },
+          { model: User, as: "owner", attributes: ["id", "firstName", "lastName"] }
         ]
       })
 
-    return res.status(200).send(product);
+    const colors = await Color.findAll({
+      where: {
+        id: {
+          [Op.in] : JSON.parse(product.colors)
+        }
+      }
+    })
+    const sizes = await Size.findAll({
+      where: {
+        id: {
+          [Op.in] : JSON.parse(product.sizes)
+        }
+      }
+    })
+    product.colors = colors;
+    product.sizes = sizes;
+    return res.status(200).send({data : product});
   } catch (error) {
     console.log(error)
     return res.status(500).send({
@@ -236,5 +313,6 @@ module.exports = {
   updateProduct,
   getProductById,
   deleteProduct,
-  uploadImages
+  uploadImages,
+  getCartProducts
 }
