@@ -162,7 +162,6 @@ const getAllPublishedProducts = async (req, res) => {
 const getCartProducts = async (req, res) => {
   try {
     const { products, savedProducts } = req.body;
-    console.log(products)
     const idProducts = products.map(product => product.id);
     const idSavedProducts = savedProducts.map(product => product.id);
     const fetchedProducts = await Product.findAll({

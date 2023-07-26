@@ -15,10 +15,8 @@ module.exports = async function auth(req, res, next) {
       })
     }
   } catch (error) {
-    console.log(error)
-
-    return res.json({
-      message: "Something is wrong"
+    return res.status(401).send({
+      message: error.message
     })
   }
 }

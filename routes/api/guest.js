@@ -5,7 +5,7 @@ const categoryRouter = require("../api/guest/categoryRouter");
 const colorRouter = require("../api/guest/colorRouter");
 const sizeRouter = require("../api/guest/sizeRouter");
 const userRouter = require("../api/guest/userRouter");
-const addressRouter = require("./guest/addressRouter");
+const cartRouter = require("../api/guest/cartRouter");
 
 
 router.use("/products", productRouter);
@@ -13,7 +13,8 @@ router.use("/categories", categoryRouter);
 router.use("/colors", colorRouter);
 router.use("/sizes", sizeRouter);
 router.use("/users", userRouter);
-router.use("/addresses", addressRouter);
+router.use("/cart", cartRouter);
+
 
 
 module.exports = router;

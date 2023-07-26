@@ -11,8 +11,7 @@ module.exports = (sequelize,) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
-      const { Category, Image, User, Order } = models;
+      const { Category, Image, User, Order, Cart } = models;
 
       this.belongsTo(Category, {
         foreignKey: "categoryId",
@@ -32,6 +31,11 @@ module.exports = (sequelize,) => {
         onDelete: "cascade",
         hooks: true
       });
+
+      this.hasMany(Cart, {
+        foreignKey: "productId",
+        as: "cart"
+      })
 
       this.belongsToMany(User, {through: Order, foreignKey: "productId", otherKey: "userId"});
       this.beforeBulkDestroy(async (data) => {
