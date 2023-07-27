@@ -1,4 +1,4 @@
-const { Cart, Product } = require("../models")
+const { Cart, Product, Category, Image } = require("../models")
 const {cartSchema} = require("../validations/cartSchema");
 const {Op} = require("sequelize");
 
@@ -70,15 +70,105 @@ const getCartsProducts = async (req, res) => {
         userId
       },
       include: [
-        {model: Product, as: "products", attributes: ["name", "brand", "price", "category"]}
+        {model: Product, as: "product", attributes: ["name", "brand", "price"], include: [
+            {
+              model: Category,
+              as: "category",
+              attributes: ["name"]
+            },
+            {
+              model: Image,
+              as: "images",
+              where: {
+                isMain : true
+              },
+              attributes: ["path"]
+            }
+          ]}
       ]
     })
+    const data = {
+      products: [],
+      savedProducts: []
+    }
+    allProducts.forEach(product => {
+      if (product.type === "cart") {
+        data.products.push({
+          id: product.id,
+          name: product.product.name,
+          color: product.color,
+          size: product.size,
+          count: product.count,
+          brand: product.product.brand,
+          price: product.product.price,
+          category: product.product.category.name,
+          image: product.product.images[0].path
+        })
+      } else {
+        data.savedProducts.push({
+          id: product.id,
+          name: product.product.name,
+          color: product.color,
+          size: product.size,
+          count: product.count,
+          brand: product.product.brand,
+          price: product.product.price,
+          category: product.product.category.name,
+          image: product.product.images[0].path
+        })
+      }
+    })
+    return res.status(200).send({data})
   } catch (error) {
+    return res.status(500).send({
+      message: error.message
+    })
+  }
+}
 
+const updateCart = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { ...data } = req.body;
+    await Cart.update(data, {
+      where: {
+        id
+      }
+    })
+
+    return res.status(200).send({
+      successMessage : "Successfully updated"
+    })
+  } catch (error) {
+    return res.status(500).send({
+      message: error.message
+    })
+  }
+}
+
+const deleteCart = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Cart.destroy({
+      where: {
+        id
+      }
+    })
+
+    return res.status(200).send({
+      successMessage : "Successfully deleted"
+    })
+  } catch (error) {
+    return res.status(500).send({
+      message: error.message
+    })
   }
 }
 
 module.exports = {
   addToCartBulk,
-  addToCart
+  addToCart,
+  getCartsProducts,
+  updateCart,
+  deleteCart
 }

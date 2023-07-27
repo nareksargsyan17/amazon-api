@@ -8,6 +8,7 @@ module.exports = (sequelize) => {
       const { User, Product } = models
       this.belongsTo(Product, {
         foreignKey: "productId",
+        as: "product",
         onDelete : "cascade",
       })
 

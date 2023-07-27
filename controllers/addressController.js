@@ -9,7 +9,9 @@ const addAddress = async (req, res) => {
     await addressSchema.validateAsync({address, userId});
     const addressData = await Address.create({address, userId});
 
-    return res.status(201).send(addressData);
+    return res.status(200).send({
+      data: addressData
+    });
   } catch (error) {
     return res.status(500).json({
       message: error.message
@@ -44,7 +46,7 @@ const chooseMain = async (req, res) => {
     );
 
     return res.status(200).send({
-      message: "You are successfully chose new main Address"
+      data: id
     });
   } catch (error) {
     return res.status(500).send({
@@ -53,21 +55,39 @@ const chooseMain = async (req, res) => {
   }
 };
 
+const deleteAddress = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Address.destroy({
+      where: {id}
+    })
+    return res.status(200).send({
+      successMessage: "Deleted"
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message
+    })
+  }
+}
+
 const getAllAddresses = async (req, res) => {
   try {
     const user = req.user;
     const addresses = await user.getAddresses();
-    return res.status(200).send(addresses);
+    return res.status(200).send({
+      data: addresses
+    });
   } catch (error) {
     return res.status(500).json({
       message: "Something is wrong"
     })
   }
-
 }
 
 module.exports = {
   addAddress,
   chooseMain,
-  getAllAddresses
+  getAllAddresses,
+  deleteAddress
 }

@@ -141,7 +141,7 @@ const changePassword = async (req, res) => {
     );
 
     return res.status(200).send({
-      message: "Your password was changed"
+      successMessage: "Your password was changed"
     })
   } catch (error) {
     return res.status(500).json({
