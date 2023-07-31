@@ -135,9 +135,9 @@ const updateCart = async (req, res) => {
         id
       }
     })
-
+    const updated = await Cart.findByPk(id);
     return res.status(200).send({
-      successMessage : "Successfully updated"
+      data : updated
     })
   } catch (error) {
     return res.status(500).send({
@@ -156,7 +156,7 @@ const deleteCart = async (req, res) => {
     })
 
     return res.status(200).send({
-      successMessage : "Successfully deleted"
+      data : id
     })
   } catch (error) {
     return res.status(500).send({

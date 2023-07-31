@@ -10,7 +10,7 @@ const addAddress = async (req, res) => {
     const addressData = await Address.create({address, userId});
 
     return res.status(200).send({
-      data: addressData
+      address: addressData
     });
   } catch (error) {
     return res.status(500).json({

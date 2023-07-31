@@ -2,9 +2,8 @@ const router = require("express").Router();
 const { addProduct, getAllProducts, updateProduct, uploadImages, deleteProduct } = require("../../../../controllers/productController");
 const upload = require("../../../../config/imageConfig");
 const validateId = require("../../../../middleware/productMiddleware");
-const auth = require("../../../../middleware/authMiddleware");
 
-router.use(auth);
+
 router.post("/add", addProduct);
 router.get("/get_all", getAllProducts);
 

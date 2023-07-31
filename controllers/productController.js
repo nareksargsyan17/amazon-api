@@ -1,9 +1,9 @@
 const { Product, Category, Image, Color, Size, User } = require('../models');
-const { Op } = require("sequelize");
+const { Op} = require("sequelize");
 const { productSchema } = require("../validations/productSchema");
 const { productUpdateSchema } = require("../validations/productUpdateSchema");
 const pagination = require("../pagination/pagination");
-const getSelectedCategories = require("../getSelectedCategories/getSelectedCategories")
+const getSelectedCategories = require("../getSelectedCategories/getSelectedCategories");
 
 const addProduct = async (req, res) => {
   try {
@@ -12,7 +12,9 @@ const addProduct = async (req, res) => {
     await productSchema.validateAsync(data);
     const product = await Product.create(data);
 
-    return res.status(200).send(product);
+    return res.status(200).send({
+      data: product
+    });
   } catch (error) {
     return res.status(500).json({
       message: error.message
@@ -23,7 +25,8 @@ const addProduct = async (req, res) => {
 const uploadImages = async (req, res) => {
   try {
     const { id } = req.params;
-    const imagesArr = req.files["gallery"].map(el => {
+    const {main, gallery} = JSON.parse(req.body)
+    const imagesArr = gallery.map(el => {
       return {
         productId: id,
         path : el.path,
@@ -31,24 +34,23 @@ const uploadImages = async (req, res) => {
     });
     imagesArr.push({
       productId: id,
-      path : req.files["main"][0].path,
+      path : main[0].path,
       isMain: true
     });
     const images = await Image.bulkCreate(imagesArr);
 
     return res.status(200).send(images);
   } catch (error) {
-    return res.json({
-      message: "Something is wrong"
+    return res.status(500).send({
+      message: error.message
     })
   }
 }
 
 const getAllProducts = async (req, res) => {
   try {
-    const { page, limit, sortDirection, sortWith, searchBy } = req.query;
-    const products = await Product.findAll({
-      ...pagination(page, limit, sortDirection, sortWith),
+    const userId = req.user.id
+    const products = await Product.findAndCountAll({
       include: [
         {
           model: Image,
@@ -57,26 +59,16 @@ const getAllProducts = async (req, res) => {
             isMain: true
           }
         },
-        { model: Category }
+        { model: Category, as: "category" },
       ],
       where: {
-        [Op.or]: [
-          {
-            name: {
-              [Op.substring]: searchBy ? searchBy : ""
-            }
-          },
-          {
-            brand: {
-              [Op.substring]: searchBy ? searchBy : ""
-            }
-          }
-        ]
+        userId
       }
     });
 
     return res.status(200).send({data: products});
   } catch (error) {
+    console.log(error)
     return res.status(500).send({
       message: "Something is wrong"
     });

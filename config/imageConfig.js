@@ -4,7 +4,7 @@ const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     const array_of_allowed_files = ['png', 'jpeg', 'jpg', 'gif'];
     const array_of_allowed_file_types = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
-
+    console.log(file.name)
     const file_extension = file.originalname.slice(
       file.originalname.lastIndexOf('.') + 1
     );
