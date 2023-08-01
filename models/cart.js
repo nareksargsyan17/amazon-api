@@ -14,7 +14,7 @@ module.exports = (sequelize) => {
 
       this.belongsTo(User, {
         foreignKey: "userId",
-        onDelete: "cascade"
+        onDelete: "cascade",
       });
     }
   }

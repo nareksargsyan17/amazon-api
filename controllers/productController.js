@@ -25,7 +25,14 @@ const addProduct = async (req, res) => {
 const uploadImages = async (req, res) => {
   try {
     const { id } = req.params;
-    const {main, gallery} = JSON.parse(req.body)
+    const {main, gallery} = req.files;
+    console.log(main)
+    const images = await Image.findAll({
+      where: {
+        productId: id
+      }
+    });
+
     const imagesArr = gallery.map(el => {
       return {
         productId: id,
@@ -37,9 +44,15 @@ const uploadImages = async (req, res) => {
       path : main[0].path,
       isMain: true
     });
-    const images = await Image.bulkCreate(imagesArr);
+    await Image.bulkCreate(imagesArr);
+    // if (!images) {
+    // } else {
+    //   await Image.update(imagesArr, {where: {productId: id}})
+    // }
 
-    return res.status(200).send(images);
+    return res.status(200).send({
+      successMessage: "uploaded"
+    });
   } catch (error) {
     return res.status(500).send({
       message: error.message
@@ -272,9 +285,11 @@ const updateProduct = async (req, res) => {
         ]
       })
     console.log(product)
-    return res.status(200).send(product);
+    return res.status(200).send({
+      successMessage: "updated"
+    });
   } catch (error) {
-    return res.json({
+    return res.status(500).send({
       message: error.message
     });
   }
@@ -287,11 +302,12 @@ const deleteProduct = async (req, res) => {
       where: { id }
     });
 
-    return res.send({
-      message: "Deleted Product by id: " + id
+    return res.status(200).send({
+      successMessage: "Deleted Product by id: " + id
     });
   } catch (error) {
-    return res.json({
+    console.log(error)
+    return res.status(500).send({
       message: "Something is wrong"
     })
   }

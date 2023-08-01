@@ -1,8 +1,7 @@
 const Joi = require('joi');
 
 const productUpdateSchema = Joi.object({
-  name: Joi.string()
-    .alphanum(),
+  name: Joi.string(),
   description: Joi.string(),
   brand: Joi.string(),
   price: Joi.number()
@@ -12,8 +11,8 @@ const productUpdateSchema = Joi.object({
     .integer(),
   userId: Joi.number()
     .integer(),
-  colors: Joi.string(),
-  sizes: Joi.string()
+  colors: Joi.array(),
+  sizes: Joi.array()
 })
 
 exports.productUpdateSchema = productUpdateSchema;

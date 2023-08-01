@@ -17,12 +17,12 @@ module.exports = (sequelize) => {
         as: "products"
       })
 
-      this.hasMany(Address, { foreignKey: "userId", as: "addresses" });
+      this.hasMany(Address, { foreignKey: "userId", as: "addresses", onDelete: "cascade" });
 
 
       this.belongsToMany(Product, { through: Order, foreignKey: "userId", otherKey: "productId"});
 
-      this.hasMany(Cart, {foreignKey: "userId", as: "cart"})
+      this.hasMany(Cart, {foreignKey: "userId", as: "cart", onDelete: "cascade"})
     }
   }
   User.init({

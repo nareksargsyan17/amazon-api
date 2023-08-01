@@ -12,7 +12,7 @@ module.exports = (sequelize) => {
     static associate(models) {
       const { User, Order } = models;
 
-      this.belongsTo(User, { foreignKey: "userId", as: "addresses" });
+      this.belongsTo(User, { foreignKey: "userId", as: "addresses", onDelete: "cascade" });
 
       this.hasMany(Order, { foreignKey: "addressId", as: "orders" });
     }
