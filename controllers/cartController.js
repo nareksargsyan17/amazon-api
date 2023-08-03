@@ -24,7 +24,8 @@ const addToCart = async (req, res) => {
   try {
     const userId = req.user.id;
     const {id, ...product} = req.body;
-    const data = {...product, userId, type: "cart", productId: id};
+    console.log(product, id)
+    const data = {...product, userId, type: "cart"};
     const finded = await Cart.findOne({
       where: {
         [Op.and] : [
@@ -32,7 +33,7 @@ const addToCart = async (req, res) => {
             userId
           },
           {
-            productId : data.productId
+            productId : product.productId
           },
           {
             color: product.color
@@ -70,7 +71,7 @@ const getCartsProducts = async (req, res) => {
         userId
       },
       include: [
-        {model: Product, as: "product", attributes: ["name", "brand", "price"], include: [
+        {model: Product, as: "product", attributes: ["name", "brand", "price", "id"], include: [
             {
               model: Category,
               as: "category",
@@ -95,6 +96,7 @@ const getCartsProducts = async (req, res) => {
       if (product.type === "cart") {
         data.products.push({
           id: product.id,
+          productId: product.product.id,
           name: product.product.name,
           color: product.color,
           size: product.size,
@@ -107,6 +109,7 @@ const getCartsProducts = async (req, res) => {
       } else {
         data.savedProducts.push({
           id: product.id,
+          productId: product.product.id,
           name: product.product.name,
           color: product.color,
           size: product.size,
@@ -148,10 +151,13 @@ const updateCart = async (req, res) => {
 
 const deleteCart = async (req, res) => {
   try {
-    const { id } = req.params;
+    const  id = req.body;
+    console.log(id)
     await Cart.destroy({
       where: {
-        id
+        id : {
+          [Op.in] : id
+        }
       }
     })
 

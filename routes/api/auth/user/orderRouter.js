@@ -1,10 +1,10 @@
 const router = require("express").Router();
-const { addOrder, getUserOrders } = require("../../../../controllers/orderController");
-const auth = require("../../../../middleware/authMiddleware");
+const { addOrder, getUserOrders, session} = require("../../../../controllers/orderController");
 
-router.use(auth);
 
 router.post("/add", addOrder);
+router.post("/create-checkout-session", session);
+
 router.get("/get_orders", getUserOrders);
 
 module.exports = router;

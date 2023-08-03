@@ -14,13 +14,14 @@ module.exports = (sequelize) => {
 
       this.hasMany(Product, {
         foreignKey: "userId",
-        as: "products"
+        as: "products",
+        onDelete: "cascade"
       })
 
       this.hasMany(Address, { foreignKey: "userId", as: "addresses", onDelete: "cascade" });
 
 
-      this.belongsToMany(Product, { through: Order, foreignKey: "userId", otherKey: "productId"});
+      this.belongsToMany(Product, { through: Order, foreignKey: "userId", otherKey: "productId", onDelete: "cascade"});
 
       this.hasMany(Cart, {foreignKey: "userId", as: "cart", onDelete: "cascade"})
     }

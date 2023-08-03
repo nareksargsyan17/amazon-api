@@ -30,8 +30,9 @@ module.exports = (sequelize) => {
       allowNull: false,
       references: {
         model: "products",
-        key: "id"
-      }
+        key: "id",
+        onDelete: "cascade"
+      },
     },
     count: {
       type: NUMBER,

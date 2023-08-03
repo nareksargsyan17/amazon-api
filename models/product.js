@@ -1,7 +1,7 @@
 "use strict";
 const fs = require('fs');
 const {
-  Model, INTEGER, STRING, TEXT, BOOLEAN, DATE, JSON
+  Model, INTEGER, STRING, TEXT, BOOLEAN, DATE, JSON, NUMBER
 } = require("sequelize");
 module.exports = (sequelize,) => {
   class Product extends Model {
@@ -34,7 +34,9 @@ module.exports = (sequelize,) => {
 
       this.hasMany(Cart, {
         foreignKey: "productId",
-        as: "cart"
+        as: "cart",
+        onDelete: "cascade",
+        hooks: true
       })
 
       this.belongsToMany(User, {through: Order, foreignKey: "productId", otherKey: "userId"});
@@ -43,6 +45,11 @@ module.exports = (sequelize,) => {
         images.forEach(elem => {
             fs.unlinkSync(elem.dataValues.path);
         })
+      });
+
+      this.beforeBulkDestroy(async (data) => {
+        console.log("data", data)
+        await Cart.destroy({ where: { productId : data.where.id } });
       });
     }
   }
@@ -88,6 +95,14 @@ module.exports = (sequelize,) => {
     sizes: {
       type: JSON,
       allowNull: false
+    },
+    bought: {
+      type: INTEGER,
+      defaultValue: 0
+    },
+    earnings: {
+      type: INTEGER,
+      defaultValue: 0
     },
     createdAt: {
       allowNull: false,

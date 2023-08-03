@@ -1,5 +1,5 @@
 'use strict';
-const { INTEGER, STRING, TEXT, BOOLEAN, DATE, JSON } = require("sequelize");
+const { INTEGER, STRING, TEXT, BOOLEAN, DATE, JSON, NUMBER} = require("sequelize");
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface) {
@@ -53,6 +53,14 @@ module.exports = {
         type: JSON,
         allowNull: false
       },
+      bought: {
+        type: INTEGER,
+        defaultValue: 0
+      },
+      earnings: {
+        type: INTEGER,
+        defaultValue: 0
+      },
       createdAt: {
         allowNull: false,
         type: DATE
@@ -60,7 +68,7 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: DATE
-      },
+      }
     });
   },
   async down(queryInterface) {

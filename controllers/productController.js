@@ -26,29 +26,28 @@ const uploadImages = async (req, res) => {
   try {
     const { id } = req.params;
     const {main, gallery} = req.files;
-    console.log(main)
-    const images = await Image.findAll({
-      where: {
-        productId: id
-      }
-    });
 
-    const imagesArr = gallery.map(el => {
-      return {
+    let imagesArr = [];
+
+    if (gallery?.length > 0)
+      imagesArr = gallery.map(el => {
+        return {
+          productId: id,
+          path : el.path,
+        };
+      });
+
+    if (main?.length > 0) {
+      imagesArr.push({
         productId: id,
-        path : el.path,
-      };
-    });
-    imagesArr.push({
-      productId: id,
-      path : main[0].path,
-      isMain: true
-    });
+        path : main[0].path,
+        isMain: true
+      });
+    }
+
+
+
     await Image.bulkCreate(imagesArr);
-    // if (!images) {
-    // } else {
-    //   await Image.update(imagesArr, {where: {productId: id}})
-    // }
 
     return res.status(200).send({
       successMessage: "uploaded"
@@ -56,6 +55,20 @@ const uploadImages = async (req, res) => {
   } catch (error) {
     return res.status(500).send({
       message: error.message
+    })
+  }
+}
+
+const removeImage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Image.destroy({ where: { id } });
+    return res.status(200).send({
+      successMessage: "Deleted"
+    })
+  } catch (error) {
+    return res.status(500).send({
+      successMessage: error.message
     })
   }
 }
@@ -321,5 +334,6 @@ module.exports = {
   getProductById,
   deleteProduct,
   uploadImages,
-  getCartProducts
+  getCartProducts,
+  removeImage
 }

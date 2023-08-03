@@ -109,9 +109,7 @@ const login = async (req, res) => {
 
     const user = await User.findOne({ where: { email }, attributes: {exclude: ["password", "role", "token", "verified"]}});
 
-    let token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
-      expiresIn: 24 * 60 * 60 * 1000,
-    });
+    let token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {});
 
     return res.status(200).send({
       data: {

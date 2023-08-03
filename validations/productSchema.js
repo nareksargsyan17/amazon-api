@@ -19,7 +19,9 @@ const productSchema = Joi.object({
   colors: Joi.array()
     .required(),
   sizes: Joi.array()
-    .required()
+    .required(),
+  bought: Joi.number(),
+  earnings: Joi.number()
 })
 
 exports.productSchema = productSchema;

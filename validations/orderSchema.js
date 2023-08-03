@@ -5,7 +5,6 @@ async function existsAddressId(addressId) {
   const address = await Address.findByPk(addressId);
   console.log(address)
   if (!address) {
-    console.log(address,"jsjajsajsajsa")
     throw new Error('Address is not exists');
   }
 
@@ -35,7 +34,11 @@ const orderSchema = Joi.object({
     .external(existsProductId)
     .required(),
   count: Joi.number()
-    .integer()
+    .integer(),
+  color: Joi.string()
+    .required(),
+  size: Joi.string()
+    .required()
 })
 
 exports.orderSchema = orderSchema;

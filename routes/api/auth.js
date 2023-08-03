@@ -9,10 +9,11 @@ const auth = require("../../middleware/authMiddleware");
 
 router.use(auth);
 
+
+router.use("/orders", orderRouter);
 router.use("/products", productRouter);
 router.use("/users", userRouter);
 router.use("/addresses", addressRouter);
-router.use("/orders", orderRouter);
 router.use("/cart", cartRouter);
 
 

@@ -1,6 +1,6 @@
 'use strict';
 const {
-  Model, INTEGER
+  Model, INTEGER, STRING, DATE
 } = require('sequelize');
 module.exports = (sequelize) => {
   class Order extends Model {
@@ -12,11 +12,11 @@ module.exports = (sequelize) => {
     static associate(models) {
       const { Address, User, Product } = models;
 
-      this.belongsTo(Address, { foreignKey: "addressId", as: "address" })
+      this.belongsTo(Address, { foreignKey: "addressId", as: "addresses" })
       //
-      this.belongsTo(User, { as: "user" })
+      this.belongsTo(User, { as: "users" })
       //
-      this.belongsTo(Product, { foreignKey: "productId", as: "product"  })
+      this.belongsTo(Product, { foreignKey: "productId", as: "products"  })
     }
   }
   Order.init({
@@ -36,6 +36,12 @@ module.exports = (sequelize) => {
         key: "id"
       }
     },
+    color: {
+      type: STRING
+    },
+    size: {
+      type: STRING
+    },
     count: {
       type: INTEGER,
       defaultValue: 1
@@ -47,13 +53,20 @@ module.exports = (sequelize) => {
         model: "addresses",
         key: "id"
       }
-    }
+    },
+    createdAt: {
+      allowNull: false,
+      type: DATE
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DATE
+    },
   }, {
     sequelize,
     freezeTableName: true,
     modelName: 'Order',
     tableName: "orders",
-    timestamps: false
   });
   return Order;
 };

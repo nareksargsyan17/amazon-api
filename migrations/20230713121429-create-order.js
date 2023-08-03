@@ -1,5 +1,5 @@
 'use strict';
-const { INTEGER } = require("sequelize");
+const { INTEGER, STRING, DATE} = require("sequelize");
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface) {
@@ -26,6 +26,12 @@ module.exports = {
           key: "id"
         }
       },
+      color: {
+        type: STRING
+      },
+      size: {
+        type: STRING
+      },
       count: {
         type: INTEGER,
         defaultValue: 1
@@ -37,6 +43,14 @@ module.exports = {
           model: "addresses",
           key: "id"
         }
+      },
+      createdAt: {
+        allowNull: false,
+        type: DATE
+      },
+      updatedAt: {
+        allowNull: false,
+        type: DATE
       }
     });
   },
