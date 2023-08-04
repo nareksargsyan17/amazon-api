@@ -14,12 +14,18 @@ module.exports = (sequelize) => {
 
       this.belongsTo(Address, { foreignKey: "addressId", as: "addresses" })
       //
-      this.belongsTo(User, { as: "users" })
+      this.belongsTo(User, { foreignKey: "userId", as: "users" })
       //
       this.belongsTo(Product, { foreignKey: "productId", as: "products"  })
     }
   }
   Order.init({
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: INTEGER
+    },
     productId: {
       type: INTEGER,
       allowNull: false,

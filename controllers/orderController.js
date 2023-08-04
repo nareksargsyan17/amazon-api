@@ -1,4 +1,4 @@
-const { Order, Product, Address, Cart } = require("../models")
+const { Order, Product, Address, Cart, Image } = require("../models")
 const {orderSchema} = require("../validations/orderSchema");
 const {Op} = require("sequelize");
 require("dotenv").config();
@@ -20,25 +20,39 @@ const addOrder = async (req, res) => {
 
 const getUserOrders = async (req, res) => {
   try {
-    const order = await Order.findAll( {
+    const orders = await Order.findAll( {
       where: {
         userId: req.user.id
       },
       include: [
         {
           model: Product,
-          as: 'product',
-          attributes: ["name", "brand", "price"]
+          as: 'products',
+          attributes: ["name", "brand", "price"],
+          include: [
+            {
+              model: Image,
+              as: 'images',
+              where: {
+                isMain : true
+              },
+              attributes: ["path"]
+            }
+          ]
         },
         {
           model: Address,
-          as: "address"
+          as: "addresses",
+          attributes: ["address"]
         }
       ]
     })
 
-    return  res.status(200).send(order);
+    return  res.status(200).send({
+      data : orders
+    });
   } catch (error) {
+    console.log(error)
     return res.send({
       message: "Something is wrong"
     })
@@ -107,8 +121,10 @@ const webhook = async (req, res) => {
       try {
         event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
       } catch (err) {
-        res.status(400).send(`Webhook Error: ${err.message}`);
-        return;
+        console.log(err)
+        return res.status(400).send({
+          message: `Webhook Error: ${err.message}`
+        });
       }
 
       data = event.data.object;
@@ -152,14 +168,16 @@ const webhook = async (req, res) => {
 
           })
         }).catch((err) => {
-            console.log("err", err)
+            return res.status(500).send({
+              message: err.message
+            })
         })
     } else if  (eventType ===  "payment_intent.payment_failed") {
       console.log(data)
     }
 
     return res.status(200).send({
-      received: true
+      successMessage: "You payment success"
     })
 }
 

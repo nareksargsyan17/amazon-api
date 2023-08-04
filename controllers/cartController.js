@@ -151,14 +151,9 @@ const updateCart = async (req, res) => {
 
 const deleteCart = async (req, res) => {
   try {
-    const  id = req.body;
-    console.log(id)
+    const  { id }= req.params;
     await Cart.destroy({
-      where: {
-        id : {
-          [Op.in] : id
-        }
-      }
+      where: { id }
     })
 
     return res.status(200).send({
