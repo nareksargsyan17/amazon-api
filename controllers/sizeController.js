@@ -7,7 +7,9 @@ const addSize = async (req, res) => {
     await sizeSchema.validateAsync(data);
     const size = await Size.create(data);
 
-    return res.status(201).send(size);
+    return res.status(200).send({
+      data: size
+    });
   } catch (error) {
     return res.status(500).json({
       message: error.message
@@ -32,7 +34,9 @@ const getSize = async (req, res) => {
     const { id } = req.params;
     const size = await Size.findByPk(id);
 
-    return res.status(200).send(size);
+    return res.status(200).send({
+      data: size
+    });
   } catch (error) {
     return res.status(500).json({
       message: "Something is wrong"
@@ -51,7 +55,9 @@ const updateSize = async (req, res) => {
     )
     const updatedSize = await Size.findByPk(id);
 
-    return res.status(200).send(updatedSize);
+    return res.status(200).send({
+      data: updatedSize
+    });
   } catch (error) {
     return res.status(500).json({
       message: error.message
@@ -66,7 +72,9 @@ const deleteSize = async (req, res) => {
       where: { id }
     })
 
-    return res.status(200).send("Deleted Size by id:" + id);
+    return res.status(200).send({
+      data: id
+    });
   } catch (error) {
     return res.status(500).json({
       message: "Something is wrong"

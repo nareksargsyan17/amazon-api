@@ -5,11 +5,13 @@ const addCategory = async (req, res) => {
   try {
     const { ...data } = req.body;
     await categorySchema.validateAsync(data);
-    const category = await Category.create(data);
+    await Category.create(data);
 
-    return res.status(200).send(category);
+    return res.status(200).send({
+      successMessage: "Created"
+    });
   } catch (error) {
-    return res.status(500).json({
+    return res.status(400).send({
       message: error.message
     });
   }
@@ -118,7 +120,7 @@ const updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
     const { ...data } = req.body;
-
+    console.log(id)
     await categorySchema.validateAsync(data);
     await Category.update(
       data,
@@ -130,7 +132,7 @@ const updateCategory = async (req, res) => {
     return res.status(200).send(updatedCategory);
   } catch (error) {
 
-    return res.json({
+    return res.status(500).send({
       message: error.message
     });
   }

@@ -4,7 +4,7 @@ const validateId = require("../../../../middleware/colorMiddleware");
 
 router.post("/add", addColor);
 
-router.use("/:id", validateId);
+router.use("*/:id", validateId);
 
 router.put("/update/:id", updateColor);
 router.delete("/delete/:id", deleteColor);

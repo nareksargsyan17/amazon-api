@@ -3,6 +3,7 @@ const { Color } = require("../models");
 module.exports = async function validateId(req, res, next) {
   try {
     const { id } = req.params;
+    console.log(id)
     const color = await Color.findByPk(id);
     if (color) {
       req.color = color;

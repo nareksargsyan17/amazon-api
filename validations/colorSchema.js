@@ -15,7 +15,6 @@ async function existsColor(color) {
 
 const colorSchema = Joi.object({
   color: Joi.string()
-    .alphanum()
     .required()
     .external(existsColor)
     .messages({

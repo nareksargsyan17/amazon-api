@@ -4,14 +4,16 @@ const { colorSchema } = require("../validations/colorSchema");
 const addColor = async (req, res) => {
   try {
     const { ...data } = req.body;
-
+    console.log(data)
     await colorSchema.validateAsync(data);
     const color = await Color.create(data);
 
-    return res.status(201).send(color);
+    return res.status(200).send({
+      data: color
+    });
   } catch (error) {
 
-    return res.status(500).json({
+    return res.status(500).send({
       message: error.message
     });
   }
@@ -54,7 +56,9 @@ const updateColor = async (req, res) => {
       })
     const updatedColor = await Color.findByPk(id);
 
-    return res.status(200).send(updatedColor);
+    return res.status(200).send({
+      data: updatedColor
+    });
   } catch (error) {
 
     return res.status(500).json({
@@ -70,7 +74,9 @@ const deleteColor = async (req, res) => {
       where: { id }
     });
 
-    return res.status(200).send("Deleted color by id:" + id);
+    return res.status(200).send({
+      data: id
+    });
   } catch (error) {
 
     return res.status(500).json({

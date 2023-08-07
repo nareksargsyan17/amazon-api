@@ -107,7 +107,7 @@ const login = async (req, res) => {
   try {
     const { email } = req.body;
 
-    const user = await User.findOne({ where: { email }, attributes: {exclude: ["password", "role", "token", "verified"]}});
+    const user = await User.findOne({ where: { email }, attributes: {exclude: ["password", "token", "verified"]}});
 
     let token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {});
 
@@ -116,6 +116,21 @@ const login = async (req, res) => {
         user,
         token
       }
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Something is wrong!"
+    })
+  }
+};
+
+const getUser = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id);
+
+
+    return res.status(200).send({
+      data: user.role
     });
   } catch (error) {
     return res.status(500).json({
@@ -167,5 +182,6 @@ module.exports = {
   verifyEmail,
   login,
   changePassword,
-  getProducts
+  getProducts,
+  getUser
 }

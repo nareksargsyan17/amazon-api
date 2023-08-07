@@ -4,7 +4,7 @@ const categoryMiddleware = require("../../../../middleware/categoryMiddleware");
 
 router.post("/add", addCategory);
 
-router.use("/:id", categoryMiddleware)
+router.use("*/:id", categoryMiddleware)
 
 router.put("/update/:id", updateCategory);
 router.delete("/delete/:id", deleteCategory);
