@@ -4,6 +4,7 @@ const validateId = require("../../../middleware/sizeMiddleware");
 
 router.get("/get_all", getAllSizes);
 
+//
 router.use("/:id", validateId);
 
 router.get("/get/:id", getSize);

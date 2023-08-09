@@ -43,7 +43,8 @@ const addToCart = async (req, res) => {
           }
         ]
       }
-    })
+    });
+
     if (finded) {
       return res.status(400).send({
         message: "The product is already exist"

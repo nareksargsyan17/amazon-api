@@ -4,6 +4,7 @@ const { sizeSchema } = require("../validations/sizeSchema");
 const addSize = async (req, res) => {
   try {
     const { ...data } = req.body;
+    console.log(data)
     await sizeSchema.validateAsync(data);
     const size = await Size.create(data);
 

@@ -1,5 +1,5 @@
 'use strict';
-const { INTEGER, STRING, TEXT, BOOLEAN, DATE, JSON, NUMBER} = require("sequelize");
+const { INTEGER, STRING, TEXT, BOOLEAN, DATE, JSON } = require("sequelize");
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface) {
@@ -14,8 +14,8 @@ module.exports = {
         type: STRING,
         allowNull: false,
       },
-      description : {
-        type : TEXT,
+      description: {
+        type: TEXT,
       },
       brand : {
         type : STRING,

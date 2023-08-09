@@ -23,7 +23,7 @@ app.use(express.static('public'));
 app.use('/public', express.static('public'));
 //routers
 
-app.use("/api/user/orders", webhookRouter);
+app.use("/api/users/orders", webhookRouter);
 app.use(bodyParser.json());
 
 app.use("/api", apiRouter);

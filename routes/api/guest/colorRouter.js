@@ -5,6 +5,7 @@ const validateId = require("../../../middleware/colorMiddleware");
 
 router.get("/get_all", getAllColors);
 
+//
 router.use("/:id", validateId);
 
 router.get("/get/:id", getColor);

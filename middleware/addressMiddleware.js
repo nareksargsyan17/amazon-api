@@ -9,10 +9,9 @@ module.exports = async function validateId(req, res, next) {
       const user = await User.findByPk(userId);
       if (address) {
         if (user) {
-
+          req.address = address;
+          next();
         }
-        req.address = address;
-        next();
       }
     } else {
       res.status(404).json({
